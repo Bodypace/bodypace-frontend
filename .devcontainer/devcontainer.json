@@ -1,0 +1,22 @@
+{
+  "name": "bodypace-frontend-dev",
+  "dockerFile": "Dockerfile",
+  "customizations": {
+    "vscode": {
+      "settings": {},
+      "extensions": ["streetsidesoftware.code-spell-checker"]
+    }
+  },
+  "portsAttributes": {
+    "3000": {
+      "label": "Dev Server",
+      "onAutoForward": "notify"
+    },
+    "6006": {
+      "label": "Storybook Server",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "npm install && npx playwright install && npx playwright install-deps",
+  "remoteUser": "node"
+}
