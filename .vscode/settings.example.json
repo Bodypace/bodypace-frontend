@@ -1,10 +1,12 @@
 {
-    "cSpell.words": [
-        "bodypace",
-        "nextjs",
-        "tailwindcss",
-        "autodocs",
-        "fortawesome",
-        "fontawesome"
-    ]
+  "cSpell.words": [
+    "bodypace",
+    "nextjs",
+    "tailwindcss",
+    "autodocs",
+    "fortawesome",
+    "fontawesome"
+  ],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
