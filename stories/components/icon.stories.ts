@@ -4,7 +4,7 @@ import { within, expect } from "@storybook/test";
 import Icon from "@/components/icon";
 
 const meta = {
-  title: "Components/Icon",
+  title: "Icon",
   component: Icon,
   tags: ["autodocs"],
   argTypes: {
@@ -14,6 +14,7 @@ const meta = {
     },
     color: { control: "color" },
   },
+  excludeStories: ["tests"],
 } satisfies Meta<typeof Icon>;
 
 export default meta;
@@ -25,7 +26,7 @@ export const Bodypace: Story = {
     small: false,
   },
   play: async ({ canvasElement }) => {
-    await testBodypaceIcon(canvasElement, "/heart.png?w=128&q=75", 64, 64);
+    await tests.testBodypaceIcon(canvasElement, 64);
   },
 };
 
@@ -35,7 +36,7 @@ export const BodypaceSmall: Story = {
     small: true,
   },
   play: async ({ canvasElement }) => {
-    await testBodypaceIcon(canvasElement, "/heart.png?w=64&q=75", 32, 32);
+    await tests.testBodypaceIcon(canvasElement, 32);
   },
 };
 
@@ -45,7 +46,7 @@ export const Apple: Story = {
     name: "apple",
   },
   play: async ({ canvasElement }) => {
-    await testIcon(canvasElement, "apple", 64, 64);
+    await tests.testIcon(canvasElement, "apple", 64);
   },
 };
 
@@ -55,7 +56,7 @@ export const AppleSmall: Story = {
     small: true,
   },
   play: async ({ canvasElement }) => {
-    await testIcon(canvasElement, "apple", 32, 32);
+    await tests.testIcon(canvasElement, "apple", 32);
   },
 };
 
@@ -65,7 +66,7 @@ export const Windows: Story = {
     name: "windows",
   },
   play: async ({ canvasElement }) => {
-    await testIcon(canvasElement, "windows", 64, 64);
+    await tests.testIcon(canvasElement, "windows", 64);
   },
 };
 
@@ -75,7 +76,7 @@ export const WindowsSmall: Story = {
     small: true,
   },
   play: async ({ canvasElement }) => {
-    await testIcon(canvasElement, "windows", 32, 32);
+    await tests.testIcon(canvasElement, "windows", 32);
   },
 };
 
@@ -85,7 +86,7 @@ export const Linux: Story = {
     name: "linux",
   },
   play: async ({ canvasElement }) => {
-    await testIcon(canvasElement, "linux", 64, 64);
+    await tests.testIcon(canvasElement, "linux", 64);
   },
 };
 
@@ -95,7 +96,7 @@ export const LinuxSmall: Story = {
     small: true,
   },
   play: async ({ canvasElement }) => {
-    await testIcon(canvasElement, "linux", 32, 32);
+    await tests.testIcon(canvasElement, "linux", 32);
   },
 };
 
@@ -105,7 +106,7 @@ export const Android: Story = {
     name: "android",
   },
   play: async ({ canvasElement }) => {
-    await testIcon(canvasElement, "android", 64, 64);
+    await tests.testIcon(canvasElement, "android", 64);
   },
 };
 
@@ -115,40 +116,32 @@ export const AndroidSmall: Story = {
     small: true,
   },
   play: async ({ canvasElement }) => {
-    await testIcon(canvasElement, "android", 32, 32);
+    await tests.testIcon(canvasElement, "android", 32);
   },
 };
 
-const testBodypaceIcon = async (
-  canvasElement: HTMLElement,
-  src: string,
-  width: number,
-  height: number,
-) => {
-  const canvas = within(canvasElement);
-  const icon = canvas.getByAltText("Bodypace logo");
-  await expect(icon).toBeInTheDocument();
-  await expect(icon.getAttribute("src")).toBe(src);
-  await expect(icon.getAttribute("width")).toBe(width.toString());
-  await expect(icon.getAttribute("height")).toBe(height.toString());
-  const { width: actualWidth, height: actualHeight } =
-    icon.getBoundingClientRect();
-  await expect(actualWidth).toBe(width);
-  await expect(actualHeight).toBe(height);
-};
+export const tests = {
+  testBodypaceIcon: async (canvasElement: HTMLElement, size: number) => {
+    const canvas = within(canvasElement);
+    const icon = canvas.getByAltText("Bodypace logo");
+    await expect(icon).toBeInTheDocument();
+    await expect(icon.getAttribute("src")).toBe(
+      `/heart.png?w=${size * 2}&q=75`,
+    );
+    await expect(icon.getAttribute("width")).toBe(size.toString());
+    await expect(icon.getAttribute("height")).toBe(size.toString());
+    const { width, height } = icon.getBoundingClientRect();
+    await expect(width).toBe(size);
+    await expect(height).toBe(size);
+  },
 
-const testIcon = async (
-  canvasElement: HTMLElement,
-  iconName: string,
-  width: number,
-  height: number,
-) => {
-  const canvas = within(canvasElement);
-  const icon = canvas.getByRole("img", { hidden: true });
-  await expect(icon).toBeInTheDocument();
-  await expect(icon.getAttribute("data-icon")).toBe(iconName);
-  const { width: actualWidth, height: actualHeight } =
-    icon.getBoundingClientRect();
-  await expect(actualWidth).toBe(width);
-  await expect(actualHeight).toBe(height);
+  testIcon: async (canvasElement: HTMLElement, name: string, size: number) => {
+    const canvas = within(canvasElement);
+    const icon = canvas.getByRole("img", { hidden: true });
+    await expect(icon).toBeInTheDocument();
+    await expect(icon.getAttribute("data-icon")).toBe(name);
+    const { width, height } = icon.getBoundingClientRect();
+    await expect(width).toBe(size);
+    await expect(height).toBe(size);
+  },
 };
