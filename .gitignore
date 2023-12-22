@@ -4,6 +4,9 @@
 .vscode/*
 !.vscode/*.example.json
 
+# Storybook and Chromatic logs and other build stuff
+build-storybook.log
+
 # dependencies
 /node_modules
 /.pnp
