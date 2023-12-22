@@ -11,7 +11,8 @@
     "format:check": "prettier --check '(src|stories)/**/**.(tsx|ts|css)'",
     "test": "test-storybook",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build"
+    "storybook:build": "storybook build",
+    "storybook:deploy": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
@@ -38,6 +39,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "chromatic": "^10.1.0",
     "eslint": "^8",
     "eslint-config-next": "14.0.1",
     "eslint-config-prettier": "^9.1.0",
