@@ -6,7 +6,8 @@
     "autodocs",
     "fortawesome",
     "fontawesome",
-    "buttonish"
+    "buttonish",
+    "linkish"
   ],
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode"
