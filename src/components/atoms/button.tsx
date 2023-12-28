@@ -20,7 +20,7 @@ export default function Button({
   icon,
   iconColor,
   target,
-  className = "w-[280px] inline-block",
+  className,
   center = false,
   border = true,
   small = false,

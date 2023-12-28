@@ -10,6 +10,9 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
+  args: {
+    className: "w-[280px] inline-block",
+  },
   argTypes: {
     icon: {
       control: "select",

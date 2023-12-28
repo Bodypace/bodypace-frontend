@@ -5,6 +5,8 @@ const config: Config = {
   content: [
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./stories/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./stories/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     textColor: ({ theme }) => ({
