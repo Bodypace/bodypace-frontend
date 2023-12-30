@@ -10,7 +10,7 @@
     "format": "prettier --write '(src|stories)/**/**.(tsx|ts|css)'",
     "format:check": "prettier --check '(src|stories)/**/**.(tsx|ts|css)'",
     "test": "test-storybook",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6006 --no-open",
     "storybook:build": "storybook build",
     "storybook:deploy": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build"
   },
