@@ -6,6 +6,7 @@
 
 # Storybook and Chromatic logs and other build stuff
 build-storybook.log
+storybook-static/
 
 # dependencies
 /node_modules
