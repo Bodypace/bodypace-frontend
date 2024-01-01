@@ -22,7 +22,7 @@ export const Default: Story = {
     await expect(footer).toBeInTheDocument();
 
     const links = canvas.getAllByRole("link");
-    await expect(links).toHaveLength(3);
+    await expect(links).toHaveLength(2);
 
     const termsLink = links[0];
     await expect(termsLink).toBeInTheDocument();
@@ -33,10 +33,5 @@ export const Default: Story = {
     await expect(privacyLink).toBeInTheDocument();
     await expect(privacyLink).toHaveTextContent("Privacy Policy");
     await expect(privacyLink).toHaveAttribute("href", "privacy-policy");
-
-    const aboutUsLink = links[2];
-    await expect(aboutUsLink).toBeInTheDocument();
-    await expect(aboutUsLink).toHaveTextContent("About Us");
-    await expect(aboutUsLink).toHaveAttribute("href", "about-us");
   },
 };
