@@ -37,7 +37,7 @@ const document: DocumentPart[] = [
   ],
   [
     PARAGRAPH,
-    "If you are a parent or guardian and believe that your child under the age of 13 has provided personal information to us, please contact us immediately at rdorna8@gmail.com. We will take steps to remove such information from our files as soon as possible.",
+    "If you are a parent or guardian and believe that your child under the age of 13 has provided personal information to us, please contact us immediately at contact@bodypace.org. We will take steps to remove such information from our files as soon as possible.",
   ],
   [
     PARAGRAPH,
@@ -55,7 +55,7 @@ const document: DocumentPart[] = [
   [HEADER, "Contact us"],
   [
     PARAGRAPH,
-    "If you have any questions about this privacy policy or the app’s practices, please contact us at rdorna8@gmail.com.",
+    "If you have any questions about this privacy policy or the app’s practices, please contact us at contact@bodypace.org.",
   ],
 ];
 

@@ -24,7 +24,7 @@ const document = [
   "Entire Agreement",
   "This Agreement constitutes the entire agreement between you and us with respect to the App and supersedes all prior or contemporaneous communications and proposals, whether oral or written, between you and us.",
   "Contact Information",
-  "If you have any questions about this Agreement or the App, please contact us at rdorna8@gmail.com.",
+  "If you have any questions about this Agreement or the App, please contact us at contact@bodypace.org.",
 ];
 
 export default function TermsAndConditionsPage() {
