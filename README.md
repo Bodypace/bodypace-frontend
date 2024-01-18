@@ -1,3 +1,24 @@
+<p align="center">
+  <a href="https://bodypace.org" target="_blank">
+    <img src="https://bodypace.org/favicon.ico" width="75"/>
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://bodypace.org">bodypace.org</a> website. Encrypts and decrypts everything in your browser. Unencrypted data never leaves your device.
+</p>
+
+<p align="center">
+  <a href="https://github.com/Bodypace/bodypace-frontend/blob/master/LICENSE">
+  <img src="https://img.shields.io/github/license/bodypace/bodypace-frontend" alt="Package License" /></a>
+  <img alt="GitHub commit activity (branch)" src="https://img.shields.io/github/commit-activity/t/bodypace/bodypace-frontend">
+  <img alt="GitHub package.json version (branch)" src="https://img.shields.io/github/package-json/v/bodypace/bodypace-frontend/master">
+  <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/bodypace/bodypace-frontend/chromatic.yml?label=tests">
+  <img alt="" src="https://img.shields.io/badge/status-not%20ready%20yet%20(under%20development)-yellow" />
+</p>
+
+# Bodypace frontend
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
