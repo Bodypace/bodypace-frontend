@@ -4,7 +4,19 @@
   "customizations": {
     "vscode": {
       "settings": {},
-      "extensions": ["streetsidesoftware.code-spell-checker"]
+      "extensions": [
+        "streetsidesoftware.code-spell-checker",
+        "usernamehw.errorlens",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "orta.vscode-jest",
+        "eamodio.gitlens",
+        "bradlc.vscode-tailwindcss",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-github-actions",
+        "github.copilot",
+        "github.copilot-chat"
+      ]
     }
   },
   "portsAttributes": {
