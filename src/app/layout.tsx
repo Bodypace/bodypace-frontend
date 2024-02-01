@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { inter } from "@/lib/fonts";
+import { inter, variables } from "@/lib/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={variables}>
       <body className={inter.className}>{children}</body>
     </html>
   );

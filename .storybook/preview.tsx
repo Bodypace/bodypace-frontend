@@ -1,6 +1,6 @@
 import type { Preview } from "@storybook/react";
 import "../src/app/globals.css";
-import { inter } from "../src/lib/fonts";
+import { inter, variables } from "../src/lib/fonts";
 import * as React from "react";
 
 const preview: Preview = {
@@ -15,7 +15,7 @@ const preview: Preview = {
   },
   decorators: [
     (Story) => (
-      <div className={`${inter.className}`}>
+      <div className={`${inter.className} ${variables}`}>
         <Story />
       </div>
     ),

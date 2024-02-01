@@ -21,16 +21,25 @@ const config: Config = {
         silenced: theme("colors.color.grey.400"),
         accent: theme("colors.color.blue.14"),
         warning: theme("colors.color.orange.14"),
+
+        newDSprimary: theme("colors.color.grey.900"),
+        newDSaccent: theme("colors.color.grey.200"),
       },
     }),
     backgroundColor: ({ theme }) => ({
-      // this is "surface" in Figma
       color: {
         primary: theme("colors.color.grey.0"),
         silenced: theme("colors.color.grey.0"),
         focus: theme("colors.color.grey.50"),
         accent: theme("colors.color.blue.4"),
         warning: theme("colors.color.orange.4"),
+
+        newDSbackground: "#f7f7f7",
+        newDSprimary: theme("colors.color.grey.0"),
+        newDSsilenced: theme("colors.color.grey.50"),
+        newDSfocus: theme("colors.color.blue.9"),
+        newDSaccent: theme("colors.color.blue.4"),
+        newDSwarning: theme("colors.color.orange.4"),
       },
     }),
     gap: ({ theme }) => ({
@@ -41,12 +50,23 @@ const config: Config = {
       lg: theme("spacing.space-4"),
       xl: theme("spacing.space-6"),
       "2xl": theme("spacing.space-13"),
+
+      newDSxs: theme("spacing.space-05"),
+      newDSsm: theme("spacing.space-1"),
+      newDSmd: theme("spacing.space-2"),
+      newDSlg: theme("spacing.space-3"),
+      newDSxl: theme("spacing.space-5"),
+      newDS2xl: theme("spacing.space-8"),
     }),
     padding: ({ theme }) => theme("gap"),
     borderRadius: ({ theme }) => ({
       minimal: theme("spacing.radius-sm"),
       rounded: theme("spacing.radius-md"),
       full: theme("spacing.radius-3xl"),
+
+      newDSminimal: theme("spacing.radius-sm"),
+      newDSrounded: theme("spacing.radius-lg"),
+      newDSfull: theme("spacing.radius-3xl"),
     }),
     fontSize: {
       "2xs": "0.64rem",
@@ -57,10 +77,19 @@ const config: Config = {
       xl: "1.953rem",
       "2xl": "2.441rem",
       "3xl": "3.052rem",
+
+      newDSsm: "1rem",
+      newDSmd: "1.25rem",
+      newDSlg: "1.563rem",
+      newDSxl: "1.953rem",
+      newDSmassive: "4.768rem",
     },
     fontWeight: {
       regular: defaultTheme.fontWeight.normal,
       ...defaultTheme.fontWeight,
+    },
+    boxShadow: {
+      elevated: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
     },
     extend: {
       backgroundImage: {
@@ -152,8 +181,110 @@ const config: Config = {
         "radius-2xl": "8rem",
         "radius-3xl": "22.5rem",
       },
+      fontFamily: {
+        brand: ["var(--font-brand)", ...defaultTheme.fontFamily.sans],
+        clean: ["var(--font-clean)", ...defaultTheme.fontFamily.sans],
+        technical: ["var(--font-technical)", ...defaultTheme.fontFamily.mono],
+        plaintext: ["var(--font-plaintext)", ...defaultTheme.fontFamily.mono],
+        ciphertext: ["var(--font-ciphertext)", ...defaultTheme.fontFamily.mono],
+      },
     },
   },
   plugins: [],
 };
 export default config;
+
+// Font info copied from Figma dev mode
+
+/* brand/massive */
+// font-family: "Patua One";
+// font-size: 76.29px;
+// font-style: normal;
+// font-weight: 400;
+// line-height: normal;
+// letter-spacing: 3.815px;
+
+/* brand/xl */
+// font-family: "Patua One";
+// font-size: 31.25px;
+// font-style: normal;
+// font-weight: 400;
+// line-height: normal;
+// letter-spacing: 0.938px;
+
+/* brand/lg */
+// font-family: "Patua One";
+// font-size: 25px;
+// font-style: normal;
+// font-weight: 400;
+// line-height: normal;
+
+/* brand/md */
+// font-family: "Patua One";
+// font-size: 20px;
+// font-style: normal;
+// font-weight: 400;
+// line-height: normal;
+
+/* brand/md-underline */
+// font-family: "Patua One";
+// font-size: 20px;
+// font-style: normal;
+// font-weight: 400;
+// line-height: normal;
+// text-decoration-line: underline;
+
+/* brand/sm */
+// font-family: "Patua One";
+// font-size: 16px;
+// font-style: normal;
+// font-weight: 400;
+// line-height: normal;
+
+// ------------------------------
+
+/* clean/lg-light */
+// font-family: Poppins;
+// font-size: 25px;
+// font-style: normal;
+// font-weight: 300;
+// line-height: normal;
+
+/* clean/md */
+// font-family: Poppins;
+// font-size: 20px;
+// font-style: normal;
+// font-weight: 400;
+// line-height: normal;
+
+// ------------------------------
+
+/* technical/lg */
+// font-family: "Sometype Mono";
+// font-size: 25px;
+// font-style: normal;
+// font-weight: 400;
+// line-height: normal;
+
+/* technical/md */
+// font-family: "Sometype Mono";
+// font-size: 20px;
+// font-style: normal;
+// font-weight: 400;
+// line-height: normal;
+
+// ------------------------------
+
+/* secured/lg-plaintext */
+// font-family: NTR;
+// font-size: 25px;
+// font-style: normal;
+// font-weight: 400;
+// line-height: normal;
+
+/* secured/lg-ciphertext */
+// font-family: "Redacted Script";
+// font-size: 25px;
+// font-style: normal;
+// font-weight: 400;
+// line-height: normal;
