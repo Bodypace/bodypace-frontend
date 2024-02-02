@@ -78,11 +78,23 @@ const config: Config = {
       "2xl": "2.441rem",
       "3xl": "3.052rem",
 
-      newDSsm: "1rem",
-      newDSmd: "1.25rem",
-      newDSlg: "1.563rem",
-      newDSxl: "1.953rem",
-      newDSmassive: "4.768rem",
+      newDSsm: ["1rem", "1.2"],
+      newDSmd: ["1.25rem", "1.2"],
+      newDSlg: ["1.563rem", "1.2"],
+      newDSxl: [
+        "1.953rem",
+        {
+          letterSpacing: "0.0586rem",
+          lineHeight: "1.24",
+        },
+      ],
+      newDSmassive: [
+        "4.768rem",
+        {
+          letterSpacing: "0.2384rem",
+          lineHeight: "1.24",
+        },
+      ],
     },
     fontWeight: {
       regular: defaultTheme.fontWeight.normal,

@@ -24,7 +24,7 @@ export const Default: Story = {
         'Poppins, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
       "font-weight": "300",
       "font-size": "25.008px",
-      "line-height": "37.512px", // inside firefox on my machine it is 37.5167px, idk why
+      "line-height": "30.0096px", // inside firefox on my machine it is 30.0167px, idk why
       "letter-spacing": "normal",
       "text-transform": "none",
       "text-align": "start",

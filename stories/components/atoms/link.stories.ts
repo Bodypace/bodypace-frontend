@@ -27,7 +27,7 @@ export const Default: Story = {
       "text-decoration": "underline solid rgb(32, 32, 32)",
       "font-weight": "400",
       "font-size": "20px",
-      "line-height": "30px",
+      "line-height": "24px",
       "letter-spacing": "normal",
       "text-transform": "none",
       "text-align": "start",
