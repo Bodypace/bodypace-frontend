@@ -78,9 +78,9 @@ const config: Config = {
       "2xl": "2.441rem",
       "3xl": "3.052rem",
 
-      newDSsm: ["1rem", "1.2"],
-      newDSmd: ["1.25rem", "1.2"],
-      newDSlg: ["1.563rem", "1.2"],
+      newDSsm: ["1rem", "1.24"],
+      newDSmd: ["1.25rem", "1.5"],
+      newDSlg: ["1.563rem", "1.24"],
       newDSxl: [
         "1.953rem",
         {
