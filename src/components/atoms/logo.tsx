@@ -1,21 +1,10 @@
 import Icon from "../icon";
 
-export interface LogoProps {
-  small?: boolean;
-}
-
-export default function Logo({ small = false }: LogoProps) {
+export default function Logo() {
   return (
-    <div
-      data-small={small}
-      className="group flex flex-row items-center gap-md data-[small=true]:gap-sm"
-    >
-      <Icon name="logo" />
-      <span
-        className="
-        font-light text-3xl group-data-[small=true]:text-lg select-none text-color-primary
-      "
-      >
+    <div className="group flex flex-row items-center gap-newDSsm">
+      <Icon name="logo" elevated />
+      <span className="font-clean text-newDSlg font-light select-none text-color-primary drop-shadow-elevated">
         Bodypace
       </span>
     </div>
