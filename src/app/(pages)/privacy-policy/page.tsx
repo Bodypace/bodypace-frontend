@@ -1,4 +1,3 @@
-import Navigation from "@/components/molecules/navigation";
 import Document from "@/components/atoms/document";
 import Footer from "@/components/molecules/footer";
 
@@ -61,9 +60,8 @@ const document: DocumentPart[] = [
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center gap-y-2xl">
-      <Navigation />
-      <article className="flex flex-1 flex-col gap-xl w-3/5">
+    <>
+      <article className="flex flex-1 flex-col gap-xl w-3/5 pt-2xl">
         {document.map(([type, text]) => {
           if (type === TITLE) return <Document.Title key={text} text={text} />;
           if (type === HEADER)
@@ -72,7 +70,6 @@ export default function PrivacyPolicyPage() {
             return <Document.Paragraph key={text} text={text} />;
         })}
       </article>
-      <Footer />
-    </main>
+    </>
   );
 }

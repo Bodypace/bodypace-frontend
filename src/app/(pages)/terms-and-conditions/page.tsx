@@ -1,6 +1,4 @@
-import Navigation from "@/components/molecules/navigation";
 import Document from "@/components/atoms/document";
-import Footer from "@/components/molecules/footer";
 
 const document = [
   "Terms and Conditions",
@@ -31,9 +29,8 @@ export default function TermsAndConditionsPage() {
   let isParagraph = false;
 
   return (
-    <main className="flex min-h-screen flex-col items-center gap-y-2xl">
-      <Navigation />
-      <article className="flex flex-1 flex-col gap-xl w-3/5">
+    <>
+      <article className="flex flex-1 flex-col gap-xl w-3/5 pt-2xl">
         <Document.Title text={document[0]} />
         {document.slice(1).map((text) => {
           isParagraph = !isParagraph;
@@ -44,7 +41,6 @@ export default function TermsAndConditionsPage() {
           );
         })}
       </article>
-      <Footer />
-    </main>
+    </>
   );
 }

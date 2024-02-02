@@ -1,5 +1,3 @@
-import Navigation from "@/components/molecules/navigation";
-import Footer from "@/components/molecules/footer";
 import Button from "@/components/atoms/button";
 
 interface SectionButton {
@@ -44,8 +42,7 @@ const sections: Section[] = [
 
 export default function DownloadsPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center">
-      <Navigation />
+    <>
       <h1 className="font-light text-3xl text-color-primary pt-2xl pb-xl">
         Downloads
       </h1>
@@ -70,7 +67,6 @@ export default function DownloadsPage() {
         ))}
       </div>
       <div className="flex flex-1" />
-      <Footer />
-    </main>
+    </>
   );
 }
