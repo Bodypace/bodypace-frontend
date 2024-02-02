@@ -1,5 +1,3 @@
-import Document from "@/components/atoms/document";
-
 const document = [
   "Terms and Conditions",
   "These terms and conditions (“Agreement”) govern your use of our mobile application (“App”). By accessing or using the App, you agree to be bound by this Agreement and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing the App.",
@@ -29,18 +27,22 @@ export default function TermsAndConditionsPage() {
   let isParagraph = false;
 
   return (
-    <>
-      <article className="flex flex-1 flex-col gap-xl w-3/5 pt-2xl">
-        <Document.Title text={document[0]} />
-        {document.slice(1).map((text) => {
-          isParagraph = !isParagraph;
-          return isParagraph ? (
-            <Document.Paragraph key={text} text={text} />
-          ) : (
-            <Document.Header key={text} text={text} />
-          );
-        })}
-      </article>
-    </>
+    <article className="flex flex-1 flex-col gap-newDSxl py-newDS2xl w-[1000px] pt-2xl">
+      <h1 className="font-brand text-newDSxl text-color-primary">
+        {document[0]}
+      </h1>
+      {document.slice(1).map((text) => {
+        isParagraph = !isParagraph;
+        return isParagraph ? (
+          <p key={text} className="font-clean text-newDSmd text-color-primary">
+            {text}
+          </p>
+        ) : (
+          <h2 key={text} className="font-brand text-newDSlg text-color-primary">
+            {text}
+          </h2>
+        );
+      })}
+    </article>
   );
 }
