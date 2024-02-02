@@ -10,19 +10,8 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
-  args: {
-    className: "w-[280px] inline-block",
-  },
   argTypes: {
-    icon: {
-      control: "select",
-      options: [undefined, "bodypace", "apple", "windows", "linux", "android"],
-    },
-    iconColor: { control: "color" },
-    center: { control: "boolean" },
-    border: { control: "boolean" },
-    small: { control: "boolean" },
-    accent: { control: "boolean" },
+    wide: { control: "boolean" },
   },
   excludeStories: ["tests"],
 } satisfies Meta<typeof Button>;
@@ -32,109 +21,81 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    text: "Download",
-    target: () => alert("Clicked download!"),
-    center: false,
-    border: true,
-    small: false,
-    accent: false,
+    text: "Click me",
+    wide: false,
+    onClick: () => alert("Clicked button!"),
   },
   play: async ({ canvasElement }) => {
-    await tests.testButtonRole(canvasElement);
-  },
-};
-
-export const WithIcon: Story = {
-  args: {
-    ...Default.args,
-    icon: "apple",
-  },
-  play: async ({ canvasElement }) => {
-    await tests.testButtonRole(canvasElement);
-  },
-};
-
-export const WithIconColored: Story = {
-  args: {
-    ...Default.args,
-    icon: "apple",
-    iconColor: "goldenrod",
-  },
-  play: async ({ canvasElement }) => {
-    await tests.testButtonRole(canvasElement);
+    await tests.testButtonRole(canvasElement, "button");
   },
 };
 
 export const Disabled: Story = {
   args: {
     ...Default.args,
-    target: undefined,
+    onClick: undefined,
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByText("Download");
-    await expect(button).toBeInTheDocument();
-    await expect(button.getAttribute("role")).toBe(null);
+    await tests.testButtonRole(canvasElement, null);
   },
 };
 
 export const Linkish: Story = {
   args: {
     ...Default.args,
-    target: "some_url",
+    onClick: "some_url",
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole("link", { name: "Download" });
-    await expect(button).toBeInTheDocument();
-    await expect(button).toHaveAttribute("href", "some_url");
+    await tests.testButtonRole(canvasElement, "link");
   },
 };
 
-export const Centered: Story = {
+export const Wide: Story = {
   args: {
     ...Default.args,
-    center: true,
+    wide: true,
   },
   play: async ({ canvasElement }) => {
-    await tests.testButtonRole(canvasElement);
+    await tests.testButtonRole(canvasElement, "button");
   },
 };
 
-export const WithoutBorder: Story = {
+export const WideDisabled: Story = {
   args: {
-    ...Default.args,
-    border: false,
+    ...Wide.args,
+    onClick: undefined,
   },
   play: async ({ canvasElement }) => {
-    await tests.testButtonRole(canvasElement);
+    await tests.testButtonRole(canvasElement, null);
   },
 };
 
-export const Small: Story = {
+export const WideLinkish: Story = {
   args: {
-    ...Default.args,
-    small: true,
+    ...Wide.args,
+    onClick: "some_url",
   },
   play: async ({ canvasElement }) => {
-    await tests.testButtonRole(canvasElement);
-  },
-};
-
-export const Accent: Story = {
-  args: {
-    ...Default.args,
-    accent: true,
-  },
-  play: async ({ canvasElement }) => {
-    await tests.testButtonRole(canvasElement);
+    await tests.testButtonRole(canvasElement, "link");
   },
 };
 
 const tests = {
-  testButtonRole: async (canvasElement: HTMLElement) => {
+  testButtonRole: async (
+    canvasElement: HTMLElement,
+    role: "button" | "link" | null,
+  ) => {
     const canvas = within(canvasElement);
-    const button = canvas.getByRole("button", { name: "Download" });
+    const button = role
+      ? canvas.getByRole(role, { name: "Click me" })
+      : canvas.getByText("Click me");
     await expect(button).toBeInTheDocument();
+
+    if (role === "link") {
+      await expect(button).toHaveAttribute("href", "some_url");
+    }
+    if (role === null) {
+      await expect(button.getAttribute("role")).toBe(null);
+    }
   },
 };

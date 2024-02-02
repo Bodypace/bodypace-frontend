@@ -1,11 +1,12 @@
 import Navigation from "@/components/molecules/navigation";
 import Footer from "@/components/molecules/footer";
-import Button, { type ButtonProps } from "@/components/atoms/button";
+import Button from "@/components/atoms/button";
+import { IconProps } from "@/components/icon";
 
 interface SectionButton {
   text: string;
   target?: string;
-  icon: ButtonProps["icon"];
+  icon: IconProps["name"];
   iconColor?: string;
 }
 
@@ -66,11 +67,8 @@ export default function DownloadsPage() {
               <Button
                 key={button.text}
                 text={button.text}
-                icon={button.icon}
-                iconColor={button.iconColor}
-                border
-                target={button.target}
-                className="w-full"
+                wide
+                onClick={button.target}
               />
             ))}
           </article>

@@ -16,27 +16,9 @@ export default function HomePage() {
         </h1>
       </header>
       <div className="flex flex-row gap-md">
-        <Button
-          text="Login/Register"
-          className="w-[280px]"
-          border
-          center
-          target="account"
-        />
-        <Button
-          text="Receive Share"
-          className="w-[280px]"
-          border
-          center
-          target="receive-share"
-        />
-        <Button
-          text="Download App"
-          className="w-[280px]"
-          border
-          center
-          target="downloads"
-        />
+        <Button text="Login/Register" onClick="account" />
+        <Button text="Receive Share" onClick="receive-share" />
+        <Button text="Download App" onClick="downloads" />
       </div>
       <div className="flex-1" />
       <Footer />

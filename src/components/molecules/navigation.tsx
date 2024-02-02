@@ -16,7 +16,7 @@ export default function Navigation() {
       <a className="px-md" href="/">
         <Logo small />
       </a>
-      <Button text="Online Account" target="account" border={false} />
+      <Button text="Online Account" onClick="account" />
     </nav>
   );
 }
