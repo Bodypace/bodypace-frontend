@@ -10,9 +10,16 @@ const meta = {
   argTypes: {
     name: {
       control: "select",
-      options: ["bodypace", "apple", "windows", "linux", "android"],
+      options: [
+        "logo",
+        "fa-circle-xmark-regular",
+        "fa-key-solid",
+        "fa-shield-solid",
+        "fa-triangle-exclamation-solid",
+        "fa-check-solid",
+      ],
     },
-    color: { control: "color" },
+    elevated: { control: "boolean" },
   },
   excludeStories: ["tests"],
 } satisfies Meta<typeof Icon>;
@@ -20,103 +27,123 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Bodypace: Story = {
+export const Logo: Story = {
   args: {
-    name: "bodypace",
-    small: false,
-  },
-  play: async ({ canvasElement }) => {
-    await tests.testBodypaceIcon(canvasElement, 64);
-  },
-};
-
-export const BodypaceSmall: Story = {
-  args: {
-    ...Bodypace.args,
-    small: true,
+    name: "logo",
+    elevated: false,
   },
   play: async ({ canvasElement }) => {
     await tests.testBodypaceIcon(canvasElement, 32);
   },
 };
 
-export const Apple: Story = {
+export const LogoElevated: Story = {
   args: {
-    ...Bodypace.args,
-    name: "apple",
+    ...Logo.args,
+    elevated: true,
   },
   play: async ({ canvasElement }) => {
-    await tests.testIcon(canvasElement, "apple", 64);
+    await tests.testBodypaceIcon(canvasElement, 32);
   },
 };
 
-export const AppleSmall: Story = {
+export const CircleXMark: Story = {
   args: {
-    ...Apple.args,
-    small: true,
+    name: "fa-circle-xmark-regular",
+    elevated: false,
   },
   play: async ({ canvasElement }) => {
-    await tests.testIcon(canvasElement, "apple", 32);
+    await tests.testIcon(canvasElement, "circle-xmark", 20, 20);
   },
 };
 
-export const Windows: Story = {
+export const CircleXMarkElevated: Story = {
   args: {
-    ...Bodypace.args,
-    name: "windows",
+    name: "fa-circle-xmark-regular",
+    elevated: true,
   },
   play: async ({ canvasElement }) => {
-    await tests.testIcon(canvasElement, "windows", 64);
+    await tests.testIcon(canvasElement, "circle-xmark", 20, 20);
   },
 };
 
-export const WindowsSmall: Story = {
+export const Key: Story = {
   args: {
-    ...Windows.args,
-    small: true,
+    name: "fa-key-solid",
+    elevated: false,
   },
   play: async ({ canvasElement }) => {
-    await tests.testIcon(canvasElement, "windows", 32);
+    await tests.testIcon(canvasElement, "key", 20, 20);
   },
 };
 
-export const Linux: Story = {
+export const KeyElevated: Story = {
   args: {
-    ...Bodypace.args,
-    name: "linux",
+    name: "fa-key-solid",
+    elevated: true,
   },
   play: async ({ canvasElement }) => {
-    await tests.testIcon(canvasElement, "linux", 64);
+    await tests.testIcon(canvasElement, "key", 20, 20);
   },
 };
 
-export const LinuxSmall: Story = {
+export const Shield: Story = {
   args: {
-    ...Linux.args,
-    small: true,
+    name: "fa-shield-solid",
+    elevated: false,
   },
   play: async ({ canvasElement }) => {
-    await tests.testIcon(canvasElement, "linux", 32);
+    await tests.testIcon(canvasElement, "shield", 18, 20);
   },
 };
 
-export const Android: Story = {
+export const ShieldElevated: Story = {
   args: {
-    ...Bodypace.args,
-    name: "android",
+    name: "fa-shield-solid",
+    elevated: true,
   },
   play: async ({ canvasElement }) => {
-    await tests.testIcon(canvasElement, "android", 64);
+    await tests.testIcon(canvasElement, "shield", 18, 20);
   },
 };
 
-export const AndroidSmall: Story = {
+export const Triangle: Story = {
   args: {
-    ...Android.args,
-    small: true,
+    name: "fa-triangle-exclamation-solid",
+    elevated: false,
   },
   play: async ({ canvasElement }) => {
-    await tests.testIcon(canvasElement, "android", 32);
+    await tests.testIcon(canvasElement, "triangle-exclamation", 25, 22);
+  },
+};
+
+export const TriangleElevated: Story = {
+  args: {
+    name: "fa-triangle-exclamation-solid",
+    elevated: true,
+  },
+  play: async ({ canvasElement }) => {
+    await tests.testIcon(canvasElement, "triangle-exclamation", 25, 22);
+  },
+};
+
+export const Check: Story = {
+  args: {
+    name: "fa-check-solid",
+    elevated: false,
+  },
+  play: async ({ canvasElement }) => {
+    await tests.testIcon(canvasElement, "check", 18, 15);
+  },
+};
+
+export const CheckElevated: Story = {
+  args: {
+    name: "fa-check-solid",
+    elevated: true,
+  },
+  play: async ({ canvasElement }) => {
+    await tests.testIcon(canvasElement, "check", 18, 15);
   },
 };
 
@@ -135,13 +162,19 @@ export const tests = {
     await expect(height).toBe(size);
   },
 
-  testIcon: async (canvasElement: HTMLElement, name: string, size: number) => {
+  testIcon: async (
+    canvasElement: HTMLElement,
+    name: string,
+    width: number,
+    height: number,
+  ) => {
     const canvas = within(canvasElement);
     const icon = canvas.getByRole("img", { hidden: true });
     await expect(icon).toBeInTheDocument();
     await expect(icon.getAttribute("data-icon")).toBe(name);
-    const { width, height } = icon.getBoundingClientRect();
-    await expect(width).toBe(size);
-    await expect(height).toBe(size);
+    const { width: actualWidth, height: actualHeight } =
+      icon.getBoundingClientRect();
+    await expect(actualWidth).toBe(width);
+    await expect(actualHeight).toBe(height);
   },
 };
