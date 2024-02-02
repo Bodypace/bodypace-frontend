@@ -20,7 +20,7 @@ export const Default: Story = {
     small: false,
   },
   play: async ({ canvasElement }) => {
-    await iconTests.testBodypaceIcon(canvasElement, 64);
+    await iconTests.testBodypaceIcon(canvasElement, 32);
     await htmlTests.testText(canvasElement, "Bodypace", {
       //   "font-family": "sans-serif",
       "font-weight": "300",

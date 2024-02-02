@@ -10,7 +10,7 @@ export default function Logo({ small = false }: LogoProps) {
       data-small={small}
       className="group flex flex-row items-center gap-md data-[small=true]:gap-sm"
     >
-      <Icon name="bodypace" small={small} />
+      <Icon name="logo" />
       <span
         className="
         font-light text-3xl group-data-[small=true]:text-lg select-none text-color-primary

@@ -1,13 +1,10 @@
 import Navigation from "@/components/molecules/navigation";
 import Footer from "@/components/molecules/footer";
 import Button from "@/components/atoms/button";
-import { IconProps } from "@/components/icon";
 
 interface SectionButton {
   text: string;
   target?: string;
-  icon: IconProps["name"];
-  iconColor?: string;
 }
 
 interface Section {
@@ -19,30 +16,28 @@ const sections: Section[] = [
   {
     title: "Desktop App",
     buttons: [
-      { text: "MacOS App (not released)", target: undefined, icon: "apple" },
-      { text: "Windows 10 (not released)", target: undefined, icon: "windows" },
-      { text: "Linux App (not released)", target: undefined, icon: "linux" },
+      { text: "MacOS App (not released)", target: undefined },
+      { text: "Windows 10 (not released)", target: undefined },
+      { text: "Linux App (not released)", target: undefined },
     ],
   },
   {
     title: "Mobile App",
     buttons: [
-      { text: "iOS App (not released)", target: undefined, icon: "apple" },
+      { text: "iOS App (not released)", target: undefined },
       {
         text: "Android App",
         target:
           "https://play.google.com/store/apps/details?id=com.bodypace.mobileapp",
-        icon: "android",
-        iconColor: "#2ec27e",
       },
     ],
   },
   {
     title: "Server App",
     buttons: [
-      { text: "MacOS App (not released)", target: undefined, icon: "apple" },
-      { text: "Windows 10 (not released)", target: undefined, icon: "windows" },
-      { text: "Linux App (not released)", target: undefined, icon: "linux" },
+      { text: "MacOS App (not released)", target: undefined },
+      { text: "Windows 10 (not released)", target: undefined },
+      { text: "Linux App (not released)", target: undefined },
     ],
   },
 ];
