@@ -97,5 +97,7 @@ const tests = {
     if (role === null) {
       await expect(button.getAttribute("role")).toBe(null);
     }
+
+    // userEvent.click(button); // there is no simple way to test this AFAIK (can't use storybook actions or jest.fn())
   },
 };
