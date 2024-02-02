@@ -14,7 +14,7 @@ export default function Navigation() {
     "
     >
       <a className="px-md" href="/">
-        <Logo small />
+        <Logo />
       </a>
       <Button text="Online Account" onClick="account" />
     </nav>
