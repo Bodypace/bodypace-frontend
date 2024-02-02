@@ -22,7 +22,7 @@ export const Default: Story = {
     await expect(footer).toBeInTheDocument();
 
     const links = canvas.getAllByRole("link");
-    await expect(links).toHaveLength(2);
+    await expect(links).toHaveLength(3);
 
     const termsLink = links[0];
     await expect(termsLink).toBeInTheDocument();
@@ -33,5 +33,13 @@ export const Default: Story = {
     await expect(privacyLink).toBeInTheDocument();
     await expect(privacyLink).toHaveTextContent("Privacy Policy");
     await expect(privacyLink).toHaveAttribute("href", "privacy-policy");
+
+    const githubLink = links[2];
+    await expect(githubLink).toBeInTheDocument();
+    await expect(githubLink).toHaveTextContent("Source Code");
+    await expect(githubLink).toHaveAttribute(
+      "href",
+      "https://github.com/Bodypace",
+    );
   },
 };
