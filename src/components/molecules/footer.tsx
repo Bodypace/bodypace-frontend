@@ -11,9 +11,8 @@ export default function Footer() {
       border-t-[1px] border-color-silenced border-dashed
     "
     >
-      <Link text="Terms and Conditions" small target="terms-and-conditions" />
-      <Link text="Privacy Policy" small target="privacy-policy" />
-      {/* <Link text="About Us" small target="about-us" /> */}
+      <Link text="Terms and Conditions" href="terms-and-conditions" />
+      <Link text="Privacy Policy" href="privacy-policy" />
     </footer>
   );
 }
