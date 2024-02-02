@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
+import Page from "@/components/organisms/page";
 import HomePage from "@/app/(pages)/(home)/page";
 
 const meta = {
@@ -8,6 +9,13 @@ const meta = {
   parameters: {
     layout: "fullscreen",
   },
+  decorators: [
+    (Story: any) => (
+      <Page>
+        <Story />
+      </Page>
+    ),
+  ],
   tags: ["autodocs"],
 } satisfies Meta<typeof HomePage>;
 

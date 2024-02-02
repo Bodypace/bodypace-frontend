@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { inter, variables } from "@/lib/fonts";
 import "./globals.css";
-import Navigation from "@/components/molecules/navigation";
-import Footer from "@/components/molecules/footer";
+import Page from "@/components/organisms/page";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,10 +15,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={variables}>
-      <body className={`${inter.className} flex flex-col min-h-screen w-full`}>
-        <Navigation />
-        <main className="flex flex-1 flex-col items-center">{children}</main>
-        <Footer />
+      <body className={inter.className}>
+        <Page>{children}</Page>
       </body>
     </html>
   );
