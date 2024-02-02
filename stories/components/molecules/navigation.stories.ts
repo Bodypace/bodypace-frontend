@@ -10,13 +10,44 @@ const meta = {
     layout: "fullscreen",
   },
   tags: ["autodocs"],
+  argTypes: {
+    status: {
+      control: "select",
+      options: [undefined, "key available", "key missing"],
+    },
+  },
 } satisfies Meta<typeof Navigation>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  args: {},
   play: async ({ canvasElement }) => {
+    await tests.testNavigation(canvasElement);
+  },
+};
+
+export const KeyAvaiable: Story = {
+  args: {
+    status: "key available",
+  },
+  play: async ({ canvasElement }) => {
+    await tests.testNavigation(canvasElement);
+  },
+};
+
+export const KeyMissing: Story = {
+  args: {
+    status: "key missing",
+  },
+  play: async ({ canvasElement }) => {
+    await tests.testNavigation(canvasElement);
+  },
+};
+
+const tests = {
+  testNavigation: async (canvasElement: HTMLElement) => {
     const canvas = within(canvasElement);
     const navigation = canvas.getByRole("navigation");
     await expect(navigation).toBeInTheDocument();
@@ -36,6 +67,6 @@ export const Default: Story = {
     const accountLink = links[1];
     await expect(accountLink).toBeInTheDocument();
     await expect(accountLink).toHaveTextContent("Online Account");
-    await expect(accountLink).toHaveAttribute("href", "account");
+    await expect(accountLink).toHaveAttribute("href", "/account");
   },
 };
