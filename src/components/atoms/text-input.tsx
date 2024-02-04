@@ -23,11 +23,13 @@ export default function TextInput({
       className="
         flex flex-row items-center px-newDSlg py-newDSmd rounded-newDSrounded shadow-elevated
         w-[450px]
-        data-[error=false]:border-[1px] border-color-newDSaccent
+        border-[1px] border-color-newDSaccent
         text-color-primary placeholder:text-color-silenced
-        bg-color-newDSprimary data-[error=true]:bg-color-warning
-        font-clean text-newDSmd
+        bg-color-newDSprimary data-[error=true]:bg-color-newDSwarning
+        font-clean text-newDSmd focus:outline-none
       "
     />
+    // NOTE: removing outline on focus has some a11y drawbacks, consider using a different approach
+    // https://www.a11yproject.com/posts/never-remove-css-outlines/#:%7E:text=Using%20the%20CSS%20rule%20%3Afocus,with%20the%20link%20or%20control.
   );
 }
