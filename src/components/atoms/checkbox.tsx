@@ -2,13 +2,17 @@ interface CheckboxProps {
   checked: boolean;
   onChange: (arg0: boolean) => any;
   small?: boolean;
+  labelledBy?: string;
 }
 
 export default function Checkbox({
   checked,
   onChange,
   small = false,
+  labelledBy,
 }: CheckboxProps) {
+  // TODO: if possible use a real checkbox input and style it.
+  // Also, now clicking on the label does not work but it probably should
   return (
     <div
       data-small={!!small}
@@ -22,6 +26,7 @@ export default function Checkbox({
       "
       role="checkbox"
       aria-checked={checked}
+      aria-labelledby={labelledBy}
       onClick={() => onChange(!checked)}
     >
       {checked && !small && (
