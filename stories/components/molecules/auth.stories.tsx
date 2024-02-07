@@ -8,7 +8,6 @@ import {
 } from "@storybook/addon-docs/blocks";
 
 import Auth, { AuthProps } from "@/components/molecules/auth";
-import { register } from "module";
 
 const meta = {
   title: "Molecules/Auth",
