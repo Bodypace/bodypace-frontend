@@ -23,7 +23,10 @@ const preview: Preview = {
       </div>
     ),
   ],
-  loaders: [mswLoader],
+  loaders: [
+    mswLoader,
+    async () => { localStorage?.removeItem('accessToken'); }
+  ],
 };
 
 export default preview;
