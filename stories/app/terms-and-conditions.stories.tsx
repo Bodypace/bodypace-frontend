@@ -16,7 +16,6 @@ const meta = {
       </Page>
     ),
   ],
-  tags: ["autodocs"],
 } satisfies Meta<typeof TermsAndConditionsPage>;
 
 export default meta;
