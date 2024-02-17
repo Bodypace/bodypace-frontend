@@ -10,6 +10,7 @@
     "format": "prettier --write '(src|stories)/**/**.(tsx|ts|css)'",
     "format:check": "prettier --check '(src|stories)/**/**.(tsx|ts|css)'",
     "test": "test-storybook",
+    "test:init-msw": "msw init public/",
     "storybook": "storybook dev -p 6006 --no-open",
     "storybook:build": "storybook build",
     "storybook:deploy": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build"
@@ -44,6 +45,8 @@
     "eslint-config-next": "14.0.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-storybook": "^0.6.15",
+    "msw": "^2.2.0",
+    "msw-storybook-addon": "^2.0.0-beta.1",
     "postcss": "^8",
     "prettier": "3.1.1",
     "storybook": "^7.6.4",
