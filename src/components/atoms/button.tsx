@@ -27,13 +27,13 @@ export default function Button({ text, wide = false, onClick }: ButtonProps) {
     </div>
   );
 
-  if (disabled) {
-    return <div>{element}</div>;
-  }
-
   if (typeof onClick === "string") {
-    return <a href={onClick}>{element}</a>;
+    return disabled ? <div>{element}</div> : <a href={onClick}>{element}</a>;
   }
 
-  return <button onClick={onClick}>{element}</button>;
+  return (
+    <button onClick={onClick} disabled={disabled}>
+      {element}
+    </button>
+  );
 }

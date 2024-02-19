@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { within, expect } from "@storybook/test";
+import { within, expect, fn, userEvent } from "@storybook/test";
 
 import Button from "@/components/atoms/button";
 
@@ -13,91 +13,80 @@ const meta = {
   argTypes: {
     wide: { control: "boolean" },
   },
-  excludeStories: ["tests"],
 } satisfies Meta<typeof Button>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {
-    text: "Click me",
-    wide: false,
-    onClick: () => alert("Clicked button!"),
-  },
-  play: async ({ canvasElement }) => {
-    await tests.testButtonRole(canvasElement, "button");
-  },
-};
+export const Enabled: Story = defineStory("button", "enabled", {
+  text: "Click me",
+  wide: false,
+  onClick: fn(),
+});
 
-export const Disabled: Story = {
-  args: {
-    ...Default.args,
-    onClick: undefined,
-  },
-  play: async ({ canvasElement }) => {
-    await tests.testButtonRole(canvasElement, null);
-  },
-};
+export const Disabled: Story = defineStory("button", "disabled", {
+  ...Enabled.args,
+  onClick: undefined,
+});
 
-export const Linkish: Story = {
-  args: {
-    ...Default.args,
-    onClick: "some_url",
-  },
-  play: async ({ canvasElement }) => {
-    await tests.testButtonRole(canvasElement, "link");
-  },
-};
+export const EnabledLink: Story = defineStory("link", "enabled", {
+  ...Enabled.args,
+  onClick: "some_url",
+});
 
-export const Wide: Story = {
-  args: {
-    ...Default.args,
-    wide: true,
-  },
-  play: async ({ canvasElement }) => {
-    await tests.testButtonRole(canvasElement, "button");
-  },
-};
+export const DisabledLink: Story = defineStory("link", "disabled", {
+  ...Enabled.args,
+  onClick: "",
+});
 
-export const WideDisabled: Story = {
-  args: {
-    ...Wide.args,
-    onClick: undefined,
-  },
-  play: async ({ canvasElement }) => {
-    await tests.testButtonRole(canvasElement, null);
-  },
-};
+export const EnabledWide: Story = defineStory("button", "enabled", {
+  ...Enabled.args,
+  wide: true,
+});
 
-export const WideLinkish: Story = {
-  args: {
-    ...Wide.args,
-    onClick: "some_url",
-  },
-  play: async ({ canvasElement }) => {
-    await tests.testButtonRole(canvasElement, "link");
-  },
-};
+export const WideDisabled: Story = defineStory("button", "disabled", {
+  ...EnabledWide.args,
+  onClick: undefined,
+});
 
-const tests = {
-  testButtonRole: async (
-    canvasElement: HTMLElement,
-    role: "button" | "link" | null,
-  ) => {
-    const canvas = within(canvasElement);
-    const button = role
-      ? canvas.getByRole(role, { name: "Click me" })
-      : canvas.getByText("Click me");
-    await expect(button).toBeInTheDocument();
+function defineStory(
+  variant: "button" | "link",
+  mode: "enabled" | "disabled",
+  spec: Story["args"],
+): Story {
+  return {
+    args: {
+      ...spec,
+    },
+    play: async ({ canvasElement, args }) => {
+      const role = variant === "link" && mode === "disabled" ? null : variant;
 
-    if (role === "link") {
-      await expect(button).toHaveAttribute("href", "some_url");
-    }
-    if (role === null) {
-      await expect(button.getAttribute("role")).toBe(null);
-    }
+      const user = userEvent.setup();
+      const canvas = within(canvasElement);
+      const element = role
+        ? canvas.getByRole(role, { name: "Click me" })
+        : canvas.getByText("Click me");
 
-    // userEvent.click(button); // there is no simple way to test this AFAIK (can't use storybook actions or jest.fn())
-  },
-};
+      await expect(element).toBeInTheDocument();
+
+      if (role === "link") {
+        await expect(element).toHaveAttribute("href", "some_url");
+      }
+
+      if (role === null) {
+        await expect(element.getAttribute("role")).toBe(null);
+      }
+
+      if (role === "button") {
+        if (mode === "enabled") {
+          await expect(element).not.toHaveAttribute("disabled");
+          await expect(args.onClick).toHaveBeenCalledTimes(0);
+          await user.click(element);
+          await expect(args.onClick).toHaveBeenCalledTimes(1);
+        } else {
+          await expect(element).toHaveAttribute("disabled");
+        }
+      }
+    },
+  };
+}
