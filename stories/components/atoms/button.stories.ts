@@ -44,7 +44,7 @@ export const EnabledWide: Story = defineStory("button", "enabled", {
   wide: true,
 });
 
-export const WideDisabled: Story = defineStory("button", "disabled", {
+export const DisabledWide: Story = defineStory("button", "disabled", {
   ...EnabledWide.args,
   onClick: undefined,
 });
