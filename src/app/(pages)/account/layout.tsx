@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ProvideAccount, AccountContext } from "@/lib/auth";
+import { ProvideAccount, AccountContext } from "@/lib/account";
 
 export default function AccountLayout({
   children,

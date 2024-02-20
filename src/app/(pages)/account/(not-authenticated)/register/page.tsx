@@ -2,7 +2,7 @@
 
 import React from "react";
 import Auth, { ErrorDetails } from "@/components/molecules/auth";
-import { useAccount } from "@/lib/auth";
+import { useAccount } from "@/lib/account";
 
 export default function AccountRegisterPage() {
   const account = useAccount();

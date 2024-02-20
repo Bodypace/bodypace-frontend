@@ -9,12 +9,21 @@ export interface AccountInfo {
   accessToken: string;
 }
 
-interface Account {
+export interface Account {
   info: AccountInfo | null | undefined;
   register: (username: string, password: string) => Promise<void>;
   login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
+
+export const noopAccount: Account = {
+  info: undefined,
+  register: async (username, password) => {},
+  login: async (username, password) => {},
+  logout: async () => {},
+};
+
+export const AccountContext = React.createContext<Account>(noopAccount);
 
 export async function fetchAccountInfo(): Promise<AccountInfo | null> {
   // TODO: This function is pointless because JWT already contains (or should) the user info
@@ -109,12 +118,5 @@ export const ProvideAccount = (): Account => {
     logout,
   };
 };
-
-export const AccountContext = React.createContext<Account>({
-  info: undefined,
-  register: (username, password) => Promise.resolve(),
-  login: (username, password) => Promise.resolve(),
-  logout: () => Promise.resolve(),
-});
 
 export const useAccount = () => React.useContext(AccountContext);

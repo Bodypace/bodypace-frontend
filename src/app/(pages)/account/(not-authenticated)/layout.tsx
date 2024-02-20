@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccount } from "@/lib/auth";
+import { useAccount } from "@/lib/account";
 import { redirect } from "next/navigation";
 
 export default function NotAuthenticatedLayout({
