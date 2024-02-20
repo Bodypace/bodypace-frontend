@@ -4,6 +4,8 @@ import { inter, variables } from "../src/lib/fonts";
 import * as React from "react";
 import { initialize, mswLoader } from "msw-storybook-addon";
 
+import { ProvideEncryption, EncryptionContext } from "../src/lib/encryption";
+
 initialize();
 
 const preview: Preview = {
@@ -17,15 +19,23 @@ const preview: Preview = {
     },
   },
   decorators: [
-    (Story) => (
-      <div className={`${inter.className} ${variables}`}>
-        <Story />
-      </div>
-    ),
+    (Story) => {
+      const encryption = ProvideEncryption();
+
+      return (
+        <div className={`${inter.className} ${variables}`}>
+          <EncryptionContext.Provider value={encryption}>
+            <Story />
+          </EncryptionContext.Provider>
+        </div>
+      );
+    },
   ],
   loaders: [
     mswLoader,
-    async () => { localStorage?.removeItem('accessToken'); }
+    async () => {
+      localStorage?.removeItem("accessToken");
+    },
   ],
 };
 
