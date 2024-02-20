@@ -7,7 +7,9 @@
     "fortawesome",
     "fontawesome",
     "buttonish",
-    "linkish"
+    "linkish",
+    "ciphertext",
+    "textbox"
   ],
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode"
