@@ -18,77 +18,45 @@ const config: Config = {
     borderColor: ({ theme }) => ({
       color: {
         primary: theme("colors.color.grey.900"),
-        silenced: theme("colors.color.grey.400"),
-        accent: theme("colors.color.blue.14"),
-        warning: theme("colors.color.orange.14"),
-
-        newDSprimary: theme("colors.color.grey.900"),
-        newDSaccent: theme("colors.color.grey.200"),
+        accent: theme("colors.color.grey.200"),
       },
     }),
     backgroundColor: ({ theme }) => ({
       color: {
+        background: "#f7f7f7",
         primary: theme("colors.color.grey.0"),
-        silenced: theme("colors.color.grey.0"),
-        focus: theme("colors.color.grey.50"),
+        silenced: theme("colors.color.grey.50"),
+        focus: theme("colors.color.blue.9"),
         accent: theme("colors.color.blue.4"),
         warning: theme("colors.color.orange.4"),
-
-        newDSbackground: "#f7f7f7",
-        newDSprimary: theme("colors.color.grey.0"),
-        newDSsilenced: theme("colors.color.grey.50"),
-        newDSfocus: theme("colors.color.blue.9"),
-        newDSaccent: theme("colors.color.blue.4"),
-        newDSwarning: theme("colors.color.orange.4"),
       },
     }),
     gap: ({ theme }) => ({
-      none: "0rem",
       xs: theme("spacing.space-05"),
       sm: theme("spacing.space-1"),
-      md: theme("spacing.space-3"),
-      lg: theme("spacing.space-4"),
-      xl: theme("spacing.space-6"),
-      "2xl": theme("spacing.space-13"),
-
-      newDSxs: theme("spacing.space-05"),
-      newDSsm: theme("spacing.space-1"),
-      newDSmd: theme("spacing.space-2"),
-      newDSlg: theme("spacing.space-3"),
-      newDSxl: theme("spacing.space-5"),
-      newDS2xl: theme("spacing.space-8"),
+      md: theme("spacing.space-2"),
+      lg: theme("spacing.space-3"),
+      xl: theme("spacing.space-5"),
+      "2xl": theme("spacing.space-8"),
     }),
     padding: ({ theme }) => theme("gap"),
     borderRadius: ({ theme }) => ({
       minimal: theme("spacing.radius-sm"),
-      rounded: theme("spacing.radius-md"),
+      rounded: theme("spacing.radius-lg"),
       full: theme("spacing.radius-3xl"),
-
-      newDSminimal: theme("spacing.radius-sm"),
-      newDSrounded: theme("spacing.radius-lg"),
-      newDSfull: theme("spacing.radius-3xl"),
     }),
     fontSize: {
-      "2xs": "0.64rem",
-      xs: "0.8rem",
-      sm: "1rem",
-      md: "1.25rem",
-      lg: "1.563rem",
-      xl: "1.953rem",
-      "2xl": "2.441rem",
-      "3xl": "3.052rem",
-
-      newDSsm: ["1rem", "1.24"],
-      newDSmd: ["1.25rem", "1.5"],
-      newDSlg: ["1.563rem", "1.24"],
-      newDSxl: [
+      sm: ["1rem", "1.24"],
+      md: ["1.25rem", "1.5"],
+      lg: ["1.563rem", "1.24"],
+      xl: [
         "1.953rem",
         {
           letterSpacing: "0.0586rem",
           lineHeight: "1.24",
         },
       ],
-      newDSmassive: [
+      massive: [
         "4.768rem",
         {
           letterSpacing: "0.2384rem",

@@ -73,7 +73,7 @@ export default function Auth({ register = false, onSubmit }: AuthProps) {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex flex-col gap-newDSlg pb-newDSxl">
+      <div className="flex flex-col gap-lg pb-xl">
         <TextInput
           type="text"
           placeholder="username"
@@ -117,10 +117,7 @@ export default function Auth({ register = false, onSubmit }: AuthProps) {
                 setCheckedTerms(v);
               }}
             />
-            <label
-              id="toc"
-              className="font-clean text-newDSmd text-color-primary"
-            >
+            <label id="toc" className="font-clean text-md text-color-primary">
               I accept Terms and Conditions
             </label>
           </Row>
@@ -137,7 +134,7 @@ export default function Auth({ register = false, onSubmit }: AuthProps) {
             />
             <label
               id="privacy"
-              className="font-clean text-newDSmd text-color-primary"
+              className="font-clean text-md text-color-primary"
             >
               I accept Privacy Policy
             </label>
@@ -165,7 +162,7 @@ function ErrorMessage({ text }: { text: string }) {
   return (
     <Row>
       <Icon name="fa-triangle-exclamation-solid" elevated />
-      <span className="max-w-[390px] font-clean text-newDSmd text-color-silenced">
+      <span className="max-w-[390px] font-clean text-md text-color-silenced">
         {text}
       </span>
     </Row>
@@ -173,7 +170,5 @@ function ErrorMessage({ text }: { text: string }) {
 }
 
 function Row({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-newDSsm pl-newDSlg">{children}</div>
-  );
+  return <div className="flex items-center gap-sm pl-lg">{children}</div>;
 }

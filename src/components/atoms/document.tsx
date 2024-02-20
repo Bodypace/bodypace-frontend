@@ -7,24 +7,24 @@ export type DocumentPart = [DocumentPartType, string];
 
 export default function Document({ document }: { document: DocumentPart[] }) {
   return (
-    <article className="flex flex-1 flex-col gap-newDSxl py-newDS2xl w-[1000px] text-color-primary">
+    <article className="flex flex-1 flex-col gap-xl py-2xl w-[1000px] text-color-primary">
       {document.map(([type, text]) => {
         switch (type) {
           case DocumentPartType.Title:
             return (
-              <h1 key={text} className="font-brand text-newDSxl">
+              <h1 key={text} className="font-brand text-xl">
                 {text}
               </h1>
             );
           case DocumentPartType.Header:
             return (
-              <h2 key={text} className="font-brand text-newDSlg">
+              <h2 key={text} className="font-brand text-lg">
                 {text}
               </h2>
             );
           case DocumentPartType.Paragraph:
             return (
-              <p key={text} className="font-clean text-newDSmd">
+              <p key={text} className="font-clean text-md">
                 {text}
               </p>
             );

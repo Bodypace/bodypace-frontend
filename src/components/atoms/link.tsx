@@ -10,7 +10,7 @@ export interface LinkProps {
 export default function Link({ text, href }: LinkProps) {
   return (
     <a
-      className="font-brand text-newDSmd text-color-primary underline hover:no-underline "
+      className="font-brand text-md text-color-primary underline hover:no-underline "
       href={href}
     >
       {text}

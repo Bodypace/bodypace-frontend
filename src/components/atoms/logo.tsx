@@ -2,9 +2,9 @@ import Icon from "../icon";
 
 export default function Logo() {
   return (
-    <div className="group flex flex-row items-center gap-newDSsm">
+    <div className="group flex flex-row items-center gap-sm">
       <Icon name="logo" elevated />
-      <span className="font-clean text-newDSlg font-light select-none text-color-primary drop-shadow-elevated">
+      <span className="font-clean text-lg font-light select-none text-color-primary drop-shadow-elevated">
         Bodypace
       </span>
     </div>

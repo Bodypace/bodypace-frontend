@@ -11,23 +11,23 @@ export default function Navigation({ status = undefined }: NavigationProps) {
   return (
     <nav
       className="
-      flex flex-row items-center justify-between w-full pr-newDSmd
-      border-b-[1px] border-color-newDSaccent
+      flex flex-row items-center justify-between w-full pr-md
+      border-b-[1px] border-color-accent
       sticky top-0
-      bg-color-newDSbackground
+      bg-color-background
     "
     >
-      <a className="p-newDSmd" href="/">
+      <a className="p-md" href="/">
         <Logo />
       </a>
       {status && (
-        <div className="flex flex-row items-center gap-newDSsm">
+        <div className="flex flex-row items-center gap-sm">
           <Icon
             name={
               status === "key available" ? "fa-key-solid" : "fa-shield-solid"
             }
           />
-          <span className="font-brand text-newDSsm text-color-primary">
+          <span className="font-brand text-sm text-color-primary">
             {status === "key available"
               ? "This browser has your personal key"
               : "Can't decrypt data, missing personal key"}
@@ -35,7 +35,7 @@ export default function Navigation({ status = undefined }: NavigationProps) {
         </div>
       )}
       <a
-        className="flex self-stretch items-center px-newDSlg font-brand text-newDSsm text-color-primary"
+        className="flex self-stretch items-center px-lg font-brand text-sm text-color-primary"
         href="/account"
       >
         Online Account
