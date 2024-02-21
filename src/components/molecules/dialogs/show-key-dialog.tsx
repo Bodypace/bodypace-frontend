@@ -5,12 +5,12 @@ import Dialog from "../../atoms/dialog";
 
 import { useEncryption } from "@/lib/encryption";
 
-export interface ShowKeyOverlayProps {
+export interface ShowKeyDialogProps {
   open: boolean;
   setOpen: (value: boolean) => void;
 }
 
-export default function ShowKeyDialog({ open, setOpen }: ShowKeyOverlayProps) {
+export default function ShowKeyDialog({ open, setOpen }: ShowKeyDialogProps) {
   const [keyVisible, setKeyVisible] = React.useState(false);
 
   const encryption = useEncryption();
