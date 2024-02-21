@@ -6,11 +6,11 @@ import { mockEncryptionContext } from "./utils";
 
 import ShowKeyDialog from "@/components/molecules/dialogs/show-key-dialog";
 
-const MockedShowKeyOverlay = mockEncryptionContext(ShowKeyDialog);
+const MockedShowKeyDialog = mockEncryptionContext(ShowKeyDialog);
 
 const meta = {
   title: "Molecules/Dialogs/ShowKeyDialog",
-  component: MockedShowKeyOverlay,
+  component: MockedShowKeyDialog,
   parameters: {
     chromatic: { pauseAnimationAtEnd: true },
   },
@@ -26,7 +26,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof MockedShowKeyOverlay>;
+} satisfies Meta<typeof MockedShowKeyDialog>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
