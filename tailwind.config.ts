@@ -23,6 +23,8 @@ const config: Config = {
     }),
     backgroundColor: ({ theme }) => ({
       color: {
+        transparent: "transparent",
+
         background: "#f7f7f7",
         primary: theme("colors.color.grey.0"),
         silenced: theme("colors.color.grey.50"),
@@ -170,6 +172,15 @@ const config: Config = {
         technical: ["var(--font-technical)", ...defaultTheme.fontFamily.mono],
         plaintext: ["var(--font-plaintext)", ...defaultTheme.fontFamily.mono],
         ciphertext: ["var(--font-ciphertext)", ...defaultTheme.fontFamily.mono],
+      },
+      animation: {
+        slideUp: "slideUp 0.3s ease-out",
+      },
+      keyframes: {
+        slideUp: {
+          "0%": { transform: "translateY(100%)" },
+          "100%": { transform: "translateY(0)" },
+        },
       },
     },
   },
