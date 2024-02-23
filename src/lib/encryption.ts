@@ -36,6 +36,8 @@ export const ProvideEncryption = (): Encryption => {
     string | null | undefined
   >(undefined);
 
+  // TODO: avoid rendering twice on first use
+
   React.useEffect(() => {
     if (personalKey === undefined) {
       setPersonalKey(storedKeyInBrowser.get() || null);
