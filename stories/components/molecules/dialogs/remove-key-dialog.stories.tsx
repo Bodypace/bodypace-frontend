@@ -5,11 +5,11 @@ import { within, expect, userEvent, fn, waitFor } from "@storybook/test";
 
 import { ProvideEncryption } from "@/lib/encryption";
 
-import { mockEncryptionContext } from "./utils";
+import { addEncryptionMocking } from "./utils";
 
 import RemoveKeyDialog from "@/components/molecules/dialogs/remove-key-dialog";
 
-const MockedRemoveKeyDialog = mockEncryptionContext(RemoveKeyDialog);
+const MockedRemoveKeyDialog = addEncryptionMocking(RemoveKeyDialog);
 
 const meta = {
   title: "Molecules/Dialogs/RemoveKeyDialog",
