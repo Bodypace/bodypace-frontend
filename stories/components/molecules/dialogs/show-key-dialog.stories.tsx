@@ -2,11 +2,11 @@ import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import { within, expect, userEvent, fn, waitFor } from "@storybook/test";
 
-import { mockEncryptionContext } from "./utils";
+import { ReopeningDialogStory, addEncryptionMocking } from "./utils";
 
 import ShowKeyDialog from "@/components/molecules/dialogs/show-key-dialog";
 
-const MockedShowKeyDialog = mockEncryptionContext(ShowKeyDialog);
+const MockedShowKeyDialog = addEncryptionMocking(ShowKeyDialog);
 
 const meta = {
   title: "Molecules/Dialogs/ShowKeyDialog",
@@ -77,21 +77,7 @@ export const KeyVisibleReopened: Story = {
     open: true,
     setOpen: fn(),
   },
-  decorators: [
-    (Story: any, ctx) => {
-      const [open, setOpen] = React.useState(true);
-      ctx.args.open = open;
-      ctx.args.setOpen = React.useRef(
-        fn((value: boolean) => {
-          setOpen(value);
-          if (!value) {
-            setTimeout(() => setOpen(true), 1000);
-          }
-        }),
-      ).current;
-      return <Story />;
-    },
-  ],
+  decorators: [ReopeningDialogStory],
   play: async ({ args, canvasElement }) => {
     const user = userEvent.setup();
 
