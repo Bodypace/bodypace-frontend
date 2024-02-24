@@ -3,12 +3,12 @@ import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import { within, expect, fn, waitFor, userEvent } from "@storybook/test";
 
-import { addEncryptionMocking } from "../../../utils/context-mocking";
+import { ReopeningDialogStory } from "@testing/reopening-dialog";
 import {
+  addEncryptionMocking,
   ProvideEncryptionActions,
   ProvideEncryptionConnectedToActions,
-  ReopeningDialogStory,
-} from "./utils";
+} from "@testing/mocking-encryption";
 
 import EnterKeyDialog from "@/components/molecules/dialogs/enter-key-dialog";
 

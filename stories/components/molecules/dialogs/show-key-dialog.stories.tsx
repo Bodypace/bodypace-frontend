@@ -2,8 +2,8 @@ import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import { within, expect, userEvent, fn, waitFor } from "@storybook/test";
 
-import { addEncryptionMocking } from "../../../utils/context-mocking";
-import { ReopeningDialogStory } from "./utils";
+import { ReopeningDialogStory } from "@testing/reopening-dialog";
+import { addEncryptionMocking } from "@testing/mocking-encryption";
 
 import ShowKeyDialog from "@/components/molecules/dialogs/show-key-dialog";
 

@@ -1,6 +1,4 @@
 import React from "react";
-import { EncryptionContext, noopEncryption } from "@/lib/encryption";
-import { AccountContext, noopAccount } from "@/lib/account";
 
 type WithMockProp<Props, propName extends string, ContextContent> = Props & {
   [K in propName]?: Partial<ContextContent>;
@@ -32,22 +30,4 @@ export function addContextMocking<
       </Context.Provider>
     );
   };
-}
-
-export function addEncryptionMocking<Props>(Component: React.FC<Props>) {
-  return addContextMocking(
-    Component,
-    EncryptionContext,
-    "mockedEncryption",
-    noopEncryption,
-  );
-}
-
-export function addAccountMocking<Props>(Component: React.FC<Props>) {
-  return addContextMocking(
-    Component,
-    AccountContext,
-    "mockedAccount",
-    noopAccount,
-  );
 }
