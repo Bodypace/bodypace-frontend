@@ -5,7 +5,7 @@ import { within, expect, userEvent, fn, waitFor } from "@storybook/test";
 
 import { ProvideEncryption } from "@/lib/encryption";
 
-import { addEncryptionMocking } from "./utils";
+import { addEncryptionMocking } from "../../../utils/context-mocking";
 
 import RemoveKeyDialog from "@/components/molecules/dialogs/remove-key-dialog";
 

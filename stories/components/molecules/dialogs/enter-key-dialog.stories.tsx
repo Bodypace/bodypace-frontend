@@ -3,8 +3,8 @@ import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import { within, expect, fn, waitFor, userEvent } from "@storybook/test";
 
+import { addEncryptionMocking } from "../../../utils/context-mocking";
 import {
-  addEncryptionMocking,
   ProvideEncryptionActions,
   ProvideEncryptionConnectedToActions,
   ReopeningDialogStory,
