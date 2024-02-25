@@ -1,4 +1,4 @@
-interface CheckboxProps {
+export interface CheckboxProps {
   checked: boolean;
   onChange: (arg0: boolean) => any;
   small?: boolean;
