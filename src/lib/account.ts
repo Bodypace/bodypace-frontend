@@ -49,13 +49,9 @@ export async function fetchAccountInfo(): Promise<AccountInfo | null> {
 }
 
 export const ProvideAccount = (): Account => {
-  const [accountInfo, _setUserInfo] = React.useState<
+  const [accountInfo, setUserInfo] = React.useState<
     AccountInfo | null | undefined
   >(undefined);
-
-  const setUserInfo = (userInfo: AccountInfo | null) => {
-    _setUserInfo(userInfo);
-  };
 
   React.useEffect(() => {
     // TODO: this is bad
