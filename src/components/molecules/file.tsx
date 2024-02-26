@@ -20,7 +20,7 @@ export function File({
   return (
     <div
       className="
-        flex items-center w-[700px] h-[69px] py-sm gap-md border-b-[1px] border-color-accent
+        flex items-center w-[800px] h-[69px] py-sm gap-md border-b-[1px] border-color-accent
       "
     >
       <span className="font-technical text-md text-color-primary">{no}.</span>
