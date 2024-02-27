@@ -39,7 +39,6 @@ export const DecryptedUnchecked: Story = {
     encrypted: false,
     no: 1,
     filename: "blood_work.pdf",
-    size: "2.4MB",
     checked: false,
     onChange: fn(),
   },

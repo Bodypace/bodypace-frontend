@@ -4,7 +4,7 @@ export interface FileProps {
   encrypted: boolean;
   no: number;
   filename: string;
-  size: string;
+  // size: string;
   checked: CheckboxProps["checked"];
   onChange: CheckboxProps["onChange"];
 }
@@ -13,7 +13,7 @@ export function File({
   encrypted,
   no,
   filename,
-  size,
+  // size,
   checked,
   onChange,
 }: FileProps) {
@@ -43,7 +43,8 @@ export function File({
       </label>
       <div className="flex flex-1" />
       <span className="w-[100px] font-technical text-md text-color-primary">
-        {size}
+        {/* NOTE: Backend does not provide the size of the files yet */}
+        {/* {size} */}
       </span>
     </div>
   );
