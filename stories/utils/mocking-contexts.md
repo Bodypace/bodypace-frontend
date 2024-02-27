@@ -10,26 +10,28 @@ We want to mock encryption context (and account):
 While experimenting with Storybook, I concluded that those are the end results of setting different types of callbacks:
 
 ```javascript
-const story: Story = {                      // below fn() means it's spied by jest, so we can e.g. check if it was called
-args: {                                     // below action() means it's logging in UI but isn't necessarily spied by jest
-
-      a: fn(),                                        // = fn(action('a'))
-      b: fn(() => { doSomething(); }),                // = fn(action('b'))
-      c: fn(action('ccc')),                           // = fn(action('c'))
-      d: action('d'),                                 // = fn(action('d'))
-      e: action('eee'),                               // = fn(action('eee'))
-      f: () => { doSomething(); },                    // = () => { doSomething(); }
-      x: {
-        a: fn(),                                      // = fn()
-        b: fn(() => { doSomething(); }),              // = fn(() => { doSomething(); }
-        c: fn(action('ccc')),                         // = fn(action('ccc'))
-        C: fn().mockImplementation(action('CCC')),    // = fn()
-        d: action('d'),                               // = fn(action('d'))
-        e: action('eee'),                             // = fn(action('eee'))
-        f: () => { doSomething(); },                  // = () => { doSomething(); }
-      }
+const story: Story = {                              // below fn() means it's spied by jest, so we can e.g. check if it was called
+  args: {                                           // below action() means it's logging in UI but isn't necessarily spied by jest
+    a: fn(),                                        // = fn(action('a'))
+    b: fn(() => { doSomething(); }),                // = fn(action('b'))
+    c: fn(action('ccc')),                           // = fn(action('c'))
+    d: action('d'),                                 // = fn(action('d'))
+    e: action('eee'),                               // = fn(action('eee'))
+    f: () => { doSomething(); },                    // = () => { doSomething(); }
+    x: {
+      a: fn(),                                      // = fn()
+      b: fn(() => { doSomething(); }),              // = fn(() => { doSomething(); }
+      c: fn(action('ccc')),                         // = fn(action('ccc'))
+      C: fn().mockImplementation(action('CCC')),    // = fn()
+      d: action('d'),                               // = fn(action('d'))
+      e: action('eee'),                             // = fn(action('eee'))
+      f: () => { doSomething(); },                  // = () => { doSomething(); }
     }
-
+  },
+  parameters: {
+    a: action('a'),                                 // = action('a')
+    b: fn(action('b')),                             // = fn(action('b'))
+  }
 }
 ```
 
@@ -52,4 +54,3 @@ action("importPersonalKey target")();
 ```
 
 Why?????? (I guess it's because of how fn() is implemented, note that it's a StoryBook wrapper on jest.fn())
-\*/
