@@ -18,6 +18,15 @@ export function addEncryptionMocking<Props>(Component: React.FC<Props>) {
   );
 }
 
+export function MockEncryptionContext(Story: any, ctx: any) {
+  const mock = ctx.parameters.encryptionContext;
+  return (
+    <EncryptionContext.Provider value={mock}>
+      <Story />
+    </EncryptionContext.Provider>
+  );
+}
+
 export function ProvideEncryptionActions(
   personalKey: Encryption["personalKey"],
 ): Encryption {

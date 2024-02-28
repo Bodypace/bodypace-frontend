@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-
-const serverUrl = "http://localhost:8080";
+import { serverUrl } from "./constants";
+import logger from "./logging";
 
 export interface AccountInfo {
   id: number;
@@ -32,31 +32,49 @@ export async function fetchAccountInfo(): Promise<AccountInfo | null> {
   const accessToken = localStorage.getItem("accessToken");
   if (accessToken) {
     try {
+      logger.debug("@/lib/account: fetchAccountInfo: ", { accessToken });
       const response = await fetch(`${serverUrl}/accounts`, {
         method: "GET",
         headers: { Authorization: `Bearer ${accessToken}` },
         cache: "no-cache",
       });
-      const userInfo = await response.json();
-      return {
-        id: userInfo.sub,
-        accessToken: accessToken,
-      };
+      if (response.ok) {
+        const userInfo = await response.json();
+        logger.debug("@/lib/account: fetchAccountInfo: ", { userInfo });
+        return {
+          id: userInfo.sub,
+          accessToken: accessToken,
+        };
+      }
     } catch (error) {}
+  } else {
+    logger.debug("@/lib/account: fetchAccountInfo: no token");
   }
+
+  logger.debug("@/lib/account: fetchAccountInfo: null");
   localStorage.removeItem("accessToken");
   return null;
 }
 
 export const ProvideAccount = (): Account => {
-  const [accountInfo, setUserInfo] = React.useState<
+  const [accountInfo, _setUserInfo] = React.useState<
     AccountInfo | null | undefined
   >(undefined);
 
+  const setUserInfo = (info: AccountInfo | null) => {
+    logger.debug("@/lib/account: setUserInfo: ", { info });
+    _setUserInfo(info);
+  };
+
+  logger.debug("@/lib/account: ProvideAccount: ", { accountInfo });
+
   React.useEffect(() => {
-    // TODO: this is bad
+    // TODO: this is probably bad, such fetching should be done with React Query or some other alternative
     if (accountInfo === undefined) {
+      logger.debug("@/lib/account: useEffect: triggered: ", { accountInfo });
       fetchAccountInfo().then(setUserInfo);
+    } else {
+      logger.debug("@/lib/account: useEffect: skipped: ", { accountInfo });
     }
   }, [accountInfo]);
 
@@ -86,6 +104,7 @@ export const ProvideAccount = (): Account => {
   };
 
   const login = async (username: string, password: string): Promise<void> => {
+    logger.debug("@/lib/account: login: ", { username, password });
     const response = await fetch(`${serverUrl}/accounts/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -93,10 +112,13 @@ export const ProvideAccount = (): Account => {
       cache: "no-cache",
     });
 
+    logger.debug("@/lib/account: login: response: ", { response });
     let accessToken = (await response.json()).access_token;
     if (!accessToken) {
       throw new Error("Unknown username or password");
     }
+
+    logger.debug("@/lib/account: login: response token: ", { accessToken });
 
     localStorage.setItem("accessToken", String(accessToken));
     return fetchAccountInfo().then(setUserInfo);

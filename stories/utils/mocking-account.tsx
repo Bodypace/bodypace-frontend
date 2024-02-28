@@ -28,6 +28,33 @@ export function ProvideAccountActions(accountInfo: Account["info"]): Account {
   };
 }
 
+export function SpyAccountContext(Story: any, ctx: any) {
+  const account = ProvideAccount();
+  const spy = {
+    info: account.info,
+    ...React.useRef({
+      register: fn(async (username: string, password: string) => {
+        action("register")(username, password);
+        account.register(username, password);
+      }),
+      login: fn(async (username: string, password: string) => {
+        action("login")(username, password);
+        account.login(username, password);
+      }),
+      logout: fn(async () => {
+        action("logout")();
+        account.logout();
+      }),
+    }).current,
+  };
+
+  return (
+    <AccountContext.Provider value={spy}>
+      <Story />
+    </AccountContext.Provider>
+  );
+}
+
 export function ProvideAccountConnectedToActions(Story: any, ctx: any) {
   const firstRender = React.useRef(true);
   if (firstRender.current) {
