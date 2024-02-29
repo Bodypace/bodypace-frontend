@@ -4,8 +4,8 @@ import { expect, within, userEvent, waitFor } from "@storybook/test";
 // TODO: test how Settings page handles network delays and loading states ({ delay } in msw)
 
 import {
-  addEncryptionMocking,
-  ProvideEncryptionActions,
+  MockEncryptionContext,
+  ProvideSpiedEncryption,
 } from "@testing/mocking-encryption";
 import {
   addAccountMocking,
@@ -27,15 +27,9 @@ function addAuthenticatedLayout<Props>(Page: React.FC<Props>): React.FC<Props> {
   };
 }
 
-// prettier-ignore
-const MockedAccountSettingsPage =
-  addEncryptionMocking(
-    addAccountMocking(
-      addAuthenticatedLayout(
-        AccountSettingsPage
-      )
-    )
-  );
+const MockedAccountSettingsPage = addAccountMocking(
+  addAuthenticatedLayout(AccountSettingsPage),
+);
 
 const initialPersonalKey =
   "super secret initial key value, should not be exposed";
@@ -52,10 +46,10 @@ const meta = {
     chromatic: { pauseAnimationAtEnd: true },
   },
   args: {
-    mockedEncryption: ProvideEncryptionActions(initialPersonalKey),
     mockedAccount: ProvideAccountActions(initialAccountInfo),
   },
   decorators: [
+    MockEncryptionContext,
     (Story: any) => (
       <Page>
         <Story />
@@ -68,8 +62,8 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const KeyAvailable: Story = {
-  args: {
-    mockedEncryption: ProvideEncryptionActions(initialPersonalKey),
+  parameters: {
+    encryptionContext: ProvideSpiedEncryption(initialPersonalKey),
   },
   play: async ({ args, canvasElement }) => {
     const user = userEvent.setup();
@@ -101,8 +95,8 @@ export const KeyAvailable: Story = {
 };
 
 export const KeyAvailableShowKeyDialog: Story = {
-  args: {
-    mockedEncryption: ProvideEncryptionActions(initialPersonalKey),
+  parameters: {
+    encryptionContext: ProvideSpiedEncryption(initialPersonalKey),
   },
   play: async ({ canvasElement }) => {
     const user = userEvent.setup();
@@ -124,8 +118,8 @@ export const KeyAvailableShowKeyDialog: Story = {
 };
 
 export const KeyAvailableRemoveKeyDialog: Story = {
-  args: {
-    mockedEncryption: ProvideEncryptionActions(initialPersonalKey),
+  parameters: {
+    encryptionContext: ProvideSpiedEncryption(initialPersonalKey),
   },
   play: async ({ canvasElement }) => {
     const user = userEvent.setup();
@@ -144,8 +138,8 @@ export const KeyAvailableRemoveKeyDialog: Story = {
 };
 
 export const KeyNotAvailable: Story = {
-  args: {
-    mockedEncryption: ProvideEncryptionActions(null),
+  parameters: {
+    encryptionContext: ProvideSpiedEncryption(null),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -159,8 +153,8 @@ export const KeyNotAvailable: Story = {
 };
 
 export const KeyNotAvailableEnterKeyDialog: Story = {
-  args: {
-    mockedEncryption: ProvideEncryptionActions(null),
+  parameters: {
+    encryptionContext: ProvideSpiedEncryption(null),
   },
   play: async ({ canvasElement }) => {
     const user = userEvent.setup();

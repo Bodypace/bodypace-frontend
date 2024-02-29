@@ -13,12 +13,9 @@ export function MockFilesContext(Story: any, ctx: any) {
 
 export function SpyFilesContext(Story: any, ctx: any) {
   const files = ProvideFiles();
-  const spy = {
+  const spy: typeof files = {
     files: files.files,
   };
-  return (
-    <FilesContext.Provider value={spy}>
-      <Story />
-    </FilesContext.Provider>
-  );
+  ctx.parameters.filesContext = spy;
+  return MockFilesContext(Story, ctx);
 }

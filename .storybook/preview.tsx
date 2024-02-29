@@ -34,6 +34,7 @@ const preview: Preview = {
   loaders: [
     mswLoader,
     async (ctx: any) => {
+      localStorage?.removeItem("personalKey");
       localStorage?.removeItem("accessToken");
       if (ctx.parameters.localStorage) {
         for (const [key, value] of ctx.parameters.localStorage) {

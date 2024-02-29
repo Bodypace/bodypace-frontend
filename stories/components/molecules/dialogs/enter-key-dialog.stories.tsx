@@ -5,24 +5,20 @@ import { within, expect, fn, waitFor, userEvent } from "@storybook/test";
 
 import { ReopeningDialogStory } from "@testing/reopening-dialog";
 import {
-  addEncryptionMocking,
-  ProvideEncryptionActions,
-  ProvideEncryptionConnectedToActions,
+  ProvideSpiedEncryption,
+  MockEncryptionContext,
+  SpyEncryptionContext,
 } from "@testing/mocking-encryption";
 
 import EnterKeyDialog from "@/components/molecules/dialogs/enter-key-dialog";
 
-const MockedEnterKeyDialog = addEncryptionMocking(EnterKeyDialog);
 const initialKey = "super secret initial key value, should not be exposed";
 
 const meta = {
   title: "Molecules/Dialogs/EnterKeyDialog",
-  component: MockedEnterKeyDialog,
+  component: EnterKeyDialog,
   parameters: {
     chromatic: { pauseAnimationAtEnd: true },
-  },
-  args: {
-    mockedEncryption: ProvideEncryptionActions(initialKey),
   },
   decorators: [
     (Story: any) => (
@@ -31,7 +27,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof MockedEnterKeyDialog>;
+} satisfies Meta<typeof EnterKeyDialog>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -41,6 +37,10 @@ export const Opened: Story = {
     open: true,
     setOpen: fn(),
   },
+  parameters: {
+    encryptionContext: ProvideSpiedEncryption(initialKey),
+  },
+  decorators: [MockEncryptionContext],
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
     const _ = await helpers.grabControlElements(canvas);
@@ -54,6 +54,10 @@ export const InputCleared: Story = {
     open: true,
     setOpen: fn(),
   },
+  parameters: {
+    encryptionContext: ProvideSpiedEncryption(initialKey),
+  },
+  decorators: [MockEncryptionContext],
   play: async ({ args, canvasElement }) => {
     const user = userEvent.setup();
 
@@ -108,6 +112,10 @@ export const InputFilled: Story = {
     open: true,
     setOpen: fn(),
   },
+  parameters: {
+    encryptionContext: ProvideSpiedEncryption(initialKey),
+  },
+  decorators: [MockEncryptionContext],
   play: async ({ args, canvasElement }) => {
     const user = userEvent.setup();
 
@@ -133,8 +141,11 @@ export const InputFilledReopened: Story = {
     open: true,
     setOpen: fn(),
   },
-  decorators: [ProvideEncryptionConnectedToActions, ReopeningDialogStory],
-  play: async ({ args, canvasElement }) => {
+  parameters: {
+    localStorage: [["personalKey", initialKey]],
+  },
+  decorators: [SpyEncryptionContext, ReopeningDialogStory],
+  play: async ({ args, canvasElement, parameters }) => {
     const user = userEvent.setup();
 
     let canvas = within(canvasElement);
@@ -150,18 +161,18 @@ export const InputFilledReopened: Story = {
     await expect(canvas.queryByDisplayValue(key)).not.toBeInTheDocument();
     await expect(localStorage.getItem("personalKey")).toBe(initialKey);
     await waitFor(() =>
-      // waiting for this key is required because ProvideEncryptionConnectedToActions decorator renders twice:
-      // first time giving the MockableEnterKeyDialog undefined as key, and then the second time with the correct key
+      // waiting for this key is required because ProvideEncryption renders twice:
+      // first time giving the EnterKeyDialog undefined as key, and then the second time with the correct key
       // NOTE: this will be gone probably after fixing double rendering in @/lib/encryption
-      expect(args.mockedEncryption!.personalKey).toBe(initialKey),
+      expect(parameters.encryptionContext.personalKey).toBe(initialKey),
     );
 
     await user.type(input, key);
     await expect(canvas.getByDisplayValue(key)).toBeInTheDocument();
     await expect(localStorage.getItem("personalKey")).toBe(initialKey);
-    await expect(args.mockedEncryption!.personalKey).toBe(initialKey);
+    await expect(parameters.encryptionContext.personalKey).toBe(initialKey);
     await expect(
-      args.mockedEncryption!.importPersonalKey,
+      parameters.encryptionContext.importPersonalKey,
     ).toHaveBeenCalledTimes(0);
 
     await expect(saveButton).not.toHaveAttribute("disabled");
@@ -182,9 +193,9 @@ export const InputFilledReopened: Story = {
     await expect(canvas.queryByDisplayValue(key)).not.toBeInTheDocument();
 
     await expect(localStorage.getItem("personalKey")).toBe(initialKey);
-    await expect(args.mockedEncryption!.personalKey).toBe(initialKey);
+    await expect(parameters.encryptionContext.personalKey).toBe(initialKey);
     await expect(
-      args.mockedEncryption!.importPersonalKey,
+      parameters.encryptionContext.importPersonalKey,
     ).toHaveBeenCalledTimes(0);
 
     await expect(saveButton).toHaveAttribute("disabled");
@@ -197,8 +208,11 @@ export const InputFilledSaved: Story = {
     open: true,
     setOpen: fn(),
   },
-  decorators: [ProvideEncryptionConnectedToActions],
-  play: async ({ args, canvasElement }) => {
+  parameters: {
+    localStorage: [["personalKey", initialKey]],
+  },
+  decorators: [SpyEncryptionContext],
+  play: async ({ args, canvasElement, parameters }) => {
     const user = userEvent.setup();
 
     const canvas = within(canvasElement);
@@ -210,7 +224,7 @@ export const InputFilledSaved: Story = {
 
     await user.click(saveButton);
     await expect(
-      args.mockedEncryption!.importPersonalKey,
+      parameters.encryptionContext.importPersonalKey,
     ).toHaveBeenCalledTimes(0);
     await expect(args.setOpen).toHaveBeenCalledTimes(0);
 
@@ -221,20 +235,20 @@ export const InputFilledSaved: Story = {
     await expect(closeButton).not.toHaveAttribute("disabled");
 
     await expect(localStorage.getItem("personalKey")).toBe(initialKey);
-    await expect(args.mockedEncryption!.personalKey).toBe(initialKey);
+    await expect(parameters.encryptionContext.personalKey).toBe(initialKey);
 
     await user.click(saveButton);
     await expect(
-      args.mockedEncryption!.importPersonalKey,
+      parameters.encryptionContext.importPersonalKey,
     ).toHaveBeenCalledTimes(1);
     await expect(
-      args.mockedEncryption!.importPersonalKey,
+      parameters.encryptionContext.importPersonalKey,
     ).toHaveBeenNthCalledWith(1, key);
     await expect(args.setOpen).toHaveBeenCalledTimes(1);
     await expect(args.setOpen).toHaveBeenNthCalledWith(1, false);
 
     await expect(localStorage.getItem("personalKey")).toBe(key);
-    await expect(args.mockedEncryption!.personalKey).toBe(key);
+    await expect(parameters.encryptionContext.personalKey).toBe(key);
   },
 };
 
@@ -243,6 +257,10 @@ export const Closed: Story = {
     open: false,
     setOpen: fn(),
   },
+  parameters: {
+    encryptionContext: ProvideSpiedEncryption(initialKey),
+  },
+  decorators: [MockEncryptionContext],
 };
 
 const helpers = {

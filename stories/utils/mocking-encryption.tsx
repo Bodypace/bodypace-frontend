@@ -3,23 +3,13 @@ import { fn } from "@storybook/test";
 import { action } from "@storybook/addon-actions";
 import {
   EncryptionContext,
-  noopEncryption,
   type Encryption,
   ProvideEncryption,
 } from "@/lib/encryption";
-import { addContextMocking } from "./mocking-context";
-
-export function addEncryptionMocking<Props>(Component: React.FC<Props>) {
-  return addContextMocking(
-    Component,
-    EncryptionContext,
-    "mockedEncryption",
-    noopEncryption,
-  );
-}
 
 export function MockEncryptionContext(Story: any, ctx: any) {
   const mock = ctx.parameters.encryptionContext;
+  console.debug("mocking-encryption: MockEncryptionContext: ", { mock });
   return (
     <EncryptionContext.Provider value={mock}>
       <Story />
@@ -27,14 +17,51 @@ export function MockEncryptionContext(Story: any, ctx: any) {
   );
 }
 
-export function ProvideEncryptionActions(
+export function SpyEncryptionContext(Story: any, ctx: any) {
+  const encryption = ProvideEncryption();
+  const spy: typeof encryption = {
+    personalKey: encryption.personalKey,
+    ...React.useRef({
+      generateNewPersonalKey: fn(async () => {
+        action("generateNewPersonalKey")();
+        await encryption.generateNewPersonalKey();
+      }),
+      importPersonalKey: fn(async (key: string) => {
+        action("importPersonalKey")(key);
+        await encryption.importPersonalKey(key);
+      }),
+      forgetPersonalKey: fn(async () => {
+        action("forgetPersonalKey")();
+        await encryption.forgetPersonalKey();
+      }),
+      encryptData: fn(async (data: ArrayBuffer) => {
+        action("encryptData")(data);
+        return await encryption.encryptData(data);
+      }),
+      decryptData: fn(async (data: ArrayBuffer) => {
+        action("decryptData")(data);
+        return await encryption.decryptData(data);
+      }),
+    }).current,
+  };
+  ctx.parameters.encryptionContext = spy;
+  return MockEncryptionContext(Story, ctx);
+}
+
+export function ProvideSpiedEncryption(
   personalKey: Encryption["personalKey"],
 ): Encryption {
   return {
     personalKey,
-    generateNewPersonalKey: action("generateNewPersonalKey") as any,
-    importPersonalKey: action("importPersonalKey") as any,
-    forgetPersonalKey: action("forgetPersonalKey") as any,
+    generateNewPersonalKey: fn(async () => {
+      action("generateNewPersonalKey")();
+    }),
+    importPersonalKey: fn(async (key: string) => {
+      action("importPersonalKey")();
+    }),
+    forgetPersonalKey: fn(async () => {
+      action("forgetPersonalKey")();
+    }),
     encryptData: fn(async (data: ArrayBuffer) => {
       action("encryptData")(data);
       return data;
@@ -44,52 +71,4 @@ export function ProvideEncryptionActions(
       return data;
     }),
   };
-}
-
-export function ProvideEncryptionConnectedToActions(Story: any, ctx: any) {
-  const firstRender = React.useRef(true);
-  if (firstRender.current) {
-    localStorage.setItem("personalKey", ctx.args.mockedEncryption.personalKey);
-    firstRender.current = false;
-  }
-
-  const encryption = ProvideEncryption();
-
-  // we assume these are Storybook actions (e.g. come from ProvideEncryptionActions())
-  const mockedEncryption: Encryption = ctx.args.mockedEncryption;
-  const actions = {
-    generateNewPersonalKey: mockedEncryption.generateNewPersonalKey,
-    importPersonalKey: mockedEncryption.importPersonalKey,
-    forgetPersonalKey: mockedEncryption.forgetPersonalKey,
-    encryptData: mockedEncryption.encryptData,
-    decryptData: mockedEncryption.decryptData,
-  };
-
-  ctx.args.mockedEncryption = {
-    personalKey: encryption.personalKey,
-    ...React.useRef({
-      generateNewPersonalKey: fn(() => {
-        actions.generateNewPersonalKey();
-        encryption.generateNewPersonalKey();
-      }),
-      importPersonalKey: fn((key: string) => {
-        actions.importPersonalKey(key);
-        encryption.importPersonalKey(key);
-      }),
-      forgetPersonalKey: fn(() => {
-        actions.forgetPersonalKey();
-        encryption.forgetPersonalKey();
-      }),
-      encryptData: fn((data: ArrayBuffer) => {
-        actions.encryptData(data);
-        return encryption.encryptData(data);
-      }),
-      decryptData: fn((data: ArrayBuffer) => {
-        actions.decryptData(data);
-        return encryption.decryptData(data);
-      }),
-    }).current,
-  };
-
-  return Story();
 }

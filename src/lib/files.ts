@@ -49,7 +49,7 @@ async function fetchFiles(
   }
 }
 
-export function ProvideFiles() {
+export function ProvideFiles(): Files {
   const [files, _setFiles] = React.useState<Files["files"]>(undefined);
   const { info: accountInfo } = useAccount();
 

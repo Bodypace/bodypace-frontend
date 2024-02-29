@@ -3,19 +3,16 @@ import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import { within, expect, userEvent, fn, waitFor } from "@storybook/test";
 
-import { ProvideEncryption } from "@/lib/encryption";
-
-import { addEncryptionMocking } from "@testing/mocking-encryption";
+import { SpyEncryptionContext } from "@testing/mocking-encryption";
 
 import RemoveKeyDialog from "@/components/molecules/dialogs/remove-key-dialog";
 
-const MockedRemoveKeyDialog = addEncryptionMocking(RemoveKeyDialog);
-
 const meta = {
   title: "Molecules/Dialogs/RemoveKeyDialog",
-  component: MockedRemoveKeyDialog,
+  component: RemoveKeyDialog,
   parameters: {
     chromatic: { pauseAnimationAtEnd: true },
+    localStorage: [["personalKey", "random-key-from-storage-42"]],
   },
   decorators: [
     (Story: any, ctx) => {
@@ -25,8 +22,9 @@ const meta = {
         </div>
       );
     },
+    SpyEncryptionContext,
   ],
-} satisfies Meta<typeof MockedRemoveKeyDialog>;
+} satisfies Meta<typeof RemoveKeyDialog>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -36,17 +34,7 @@ export const Opened: Story = {
     open: true,
     setOpen: fn(),
   },
-  decorators: [
-    (Story: any, ctx) => {
-      localStorage.setItem("personalKey", "random-key-from-storage-42");
-      ctx.args.mockedEncryption = ProvideEncryption();
-      ctx.args.mockedEncryption.forgetPersonalKey = React.useRef(
-        fn(ctx.args.mockedEncryption.forgetPersonalKey!),
-      ).current;
-      return Story();
-    },
-  ],
-  play: async ({ args, canvasElement }) => {
+  play: async ({ args, canvasElement, parameters }) => {
     const user = userEvent.setup();
 
     const canvas = within(canvasElement);
@@ -64,14 +52,14 @@ export const Opened: Story = {
 
     await expect(args.setOpen).toHaveBeenCalledTimes(0);
     await expect(
-      args.mockedEncryption!.forgetPersonalKey,
+      parameters.encryptionContext.forgetPersonalKey,
     ).toHaveBeenCalledTimes(0);
 
     await user.click(cancelButton);
     await expect(args.setOpen).toHaveBeenCalledTimes(1);
     await expect(args.setOpen).toHaveBeenNthCalledWith(1, false);
     await expect(
-      args.mockedEncryption!.forgetPersonalKey,
+      parameters.encryptionContext.forgetPersonalKey,
     ).toHaveBeenCalledTimes(0);
 
     await expect(localStorage.getItem("personalKey")).toBe(
@@ -83,7 +71,7 @@ export const Opened: Story = {
     await expect(args.setOpen).toHaveBeenNthCalledWith(1, false);
     await expect(args.setOpen).toHaveBeenNthCalledWith(2, false);
     await expect(
-      args.mockedEncryption!.forgetPersonalKey,
+      parameters.encryptionContext.forgetPersonalKey,
     ).toHaveBeenCalledTimes(1);
 
     await expect(localStorage.getItem("personalKey")).toBe(null);

@@ -3,20 +3,16 @@ import { Meta, StoryObj } from "@storybook/react";
 import { within, expect, userEvent, fn, waitFor } from "@storybook/test";
 
 import { ReopeningDialogStory } from "@testing/reopening-dialog";
-import { addEncryptionMocking } from "@testing/mocking-encryption";
+import { MockEncryptionContext } from "@testing/mocking-encryption";
 
 import ShowKeyDialog from "@/components/molecules/dialogs/show-key-dialog";
 
-const MockedShowKeyDialog = addEncryptionMocking(ShowKeyDialog);
-
 const meta = {
   title: "Molecules/Dialogs/ShowKeyDialog",
-  component: MockedShowKeyDialog,
+  component: ShowKeyDialog,
   parameters: {
     chromatic: { pauseAnimationAtEnd: true },
-  },
-  args: {
-    mockedEncryption: {
+    encryptionContext: {
       personalKey: "mocked-personal-key-42",
     },
   },
@@ -26,8 +22,9 @@ const meta = {
         <Story />
       </div>
     ),
+    MockEncryptionContext,
   ],
-} satisfies Meta<typeof MockedShowKeyDialog>;
+} satisfies Meta<typeof ShowKeyDialog>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -37,13 +34,13 @@ export const Opened: Story = {
     open: true,
     setOpen: fn(),
   },
-  play: async ({ args, canvasElement }) => {
+  play: async ({ args, canvasElement, parameters }) => {
     const canvas = within(canvasElement);
     const _ = await helpers.grabControlElements(canvas);
 
     await helpers.expectKeyInvisible(
       canvas,
-      args.mockedEncryption!.personalKey,
+      parameters.encryptionContext.personalKey,
     );
 
     await expect(args.setOpen).toHaveBeenCalledTimes(0);
@@ -55,7 +52,7 @@ export const KeyVisible: Story = {
     open: true,
     setOpen: fn(),
   },
-  play: async ({ args, canvasElement }) => {
+  play: async ({ args, canvasElement, parameters }) => {
     const user = userEvent.setup();
 
     const canvas = within(canvasElement);
@@ -63,11 +60,14 @@ export const KeyVisible: Story = {
 
     await helpers.expectKeyInvisible(
       canvas,
-      args.mockedEncryption!.personalKey,
+      parameters.encryptionContext.personalKey,
     );
 
     await helpers.turnOnCheckbox(user, checkbox);
-    await helpers.expectKeyVisible(canvas, args.mockedEncryption!.personalKey);
+    await helpers.expectKeyVisible(
+      canvas,
+      parameters.encryptionContext.personalKey,
+    );
 
     await expect(args.setOpen).toHaveBeenCalledTimes(0);
   },
@@ -79,7 +79,7 @@ export const KeyVisibleReopened: Story = {
     setOpen: fn(),
   },
   decorators: [ReopeningDialogStory],
-  play: async ({ args, canvasElement }) => {
+  play: async ({ args, canvasElement, parameters }) => {
     const user = userEvent.setup();
 
     let canvas = within(canvasElement);
@@ -87,11 +87,14 @@ export const KeyVisibleReopened: Story = {
 
     await helpers.expectKeyInvisible(
       canvas,
-      args.mockedEncryption!.personalKey,
+      parameters.encryptionContext.personalKey,
     );
 
     await helpers.turnOnCheckbox(user, checkbox);
-    await helpers.expectKeyVisible(canvas, args.mockedEncryption!.personalKey);
+    await helpers.expectKeyVisible(
+      canvas,
+      parameters.encryptionContext.personalKey,
+    );
 
     await expect(args.setOpen).toHaveBeenCalledTimes(0);
 
@@ -109,7 +112,7 @@ export const KeyVisibleReopened: Story = {
 
     await helpers.expectKeyInvisible(
       canvas,
-      args.mockedEncryption!.personalKey,
+      parameters.encryptionContext.personalKey,
     );
   },
 };
@@ -119,7 +122,7 @@ export const KeyHidden: Story = {
     open: true,
     setOpen: fn(),
   },
-  play: async ({ args, canvasElement }) => {
+  play: async ({ args, canvasElement, parameters }) => {
     const user = userEvent.setup();
 
     const canvas = within(canvasElement);
@@ -127,16 +130,19 @@ export const KeyHidden: Story = {
 
     await helpers.expectKeyInvisible(
       canvas,
-      args.mockedEncryption!.personalKey,
+      parameters.encryptionContext.personalKey,
     );
 
     await helpers.turnOnCheckbox(user, checkbox);
-    await helpers.expectKeyVisible(canvas, args.mockedEncryption!.personalKey);
+    await helpers.expectKeyVisible(
+      canvas,
+      parameters.encryptionContext.personalKey,
+    );
 
     await helpers.turnOffCheckbox(user, checkbox);
     await helpers.expectKeyInvisible(
       canvas,
-      args.mockedEncryption!.personalKey,
+      parameters.encryptionContext.personalKey,
     );
 
     await expect(args.setOpen).toHaveBeenCalledTimes(0);
