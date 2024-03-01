@@ -1,36 +1,21 @@
 import React from "react";
 import { fn } from "@storybook/test";
 import { action } from "@storybook/addon-actions";
-import { http, HttpResponse } from "msw";
-import {
-  AccountContext,
-  noopAccount,
-  type Account,
-  ProvideAccount,
-} from "@/lib/account";
-import { addContextMocking } from "./mocking-context";
+import { AccountContext, type Account, ProvideAccount } from "@/lib/account";
 
-export function addAccountMocking<Props>(Component: React.FC<Props>) {
-  return addContextMocking(
-    Component,
-    AccountContext,
-    "mockedAccount",
-    noopAccount,
+export function MockAccountContext(Story: any, ctx: any) {
+  const mock = ctx.parameters.accountContext;
+  console.debug("mocking-account: MockAccountContext: ", { mock });
+  return (
+    <AccountContext.Provider value={mock}>
+      <Story />
+    </AccountContext.Provider>
   );
-}
-
-export function ProvideAccountActions(accountInfo: Account["info"]): Account {
-  return {
-    info: accountInfo,
-    register: action("register") as any,
-    login: action("login") as any,
-    logout: action("logout") as any,
-  };
 }
 
 export function SpyAccountContext(Story: any, ctx: any) {
   const account = ProvideAccount();
-  const spy = {
+  const spy: typeof account = {
     info: account.info,
     ...React.useRef({
       register: fn(async (username: string, password: string) => {
@@ -47,57 +32,21 @@ export function SpyAccountContext(Story: any, ctx: any) {
       }),
     }).current,
   };
-
-  return (
-    <AccountContext.Provider value={spy}>
-      <Story />
-    </AccountContext.Provider>
-  );
+  ctx.parameters.accountContext = spy;
+  return MockAccountContext(Story, ctx);
 }
 
-export function ProvideAccountConnectedToActions(Story: any, ctx: any) {
-  const firstRender = React.useRef(true);
-  if (firstRender.current) {
-    localStorage.setItem("accessToken", ctx.args.mockedAccount.accessToken);
-    ctx.parameters.msw = {
-      handlers: [
-        http.get("http://localhost:8080/accounts", () => {
-          return HttpResponse.json({
-            sub: ctx.args.mockedAccount.info.id,
-          });
-        }),
-      ],
-    };
-    firstRender.current = false;
-  }
-
-  const account = ProvideAccount();
-
-  // we assume these are Storybook actions (e.g. come from ProvideAccountActions())
-  const mockedAccount: Account = ctx.args.mockedAccount;
-  const actions = {
-    register: mockedAccount.register,
-    login: mockedAccount.login,
-    logout: mockedAccount.logout,
+export function ProvideSpiedAccount(accountInfo: Account["info"]): Account {
+  return {
+    info: accountInfo,
+    register: fn(async (username: string, password: string) => {
+      action("register")(username, password);
+    }),
+    login: fn(async (username: string, password: string) => {
+      action("login")(username, password);
+    }),
+    logout: fn(async () => {
+      action("logout")();
+    }),
   };
-
-  ctx.args.mockedAccount = {
-    info: account.info,
-    ...React.useRef({
-      register: fn((username: string, password: string) => {
-        actions.register(username, password);
-        account.register(username, password);
-      }),
-      login: fn((username: string, password: string) => {
-        actions.login(username, password);
-        account.login(username, password);
-      }),
-      logout: fn(() => {
-        actions.logout();
-        account.logout();
-      }),
-    }).current,
-  };
-
-  return <Story {...ctx} />;
 }

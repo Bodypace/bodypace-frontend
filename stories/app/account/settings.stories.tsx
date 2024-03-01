@@ -8,28 +8,13 @@ import {
   ProvideSpiedEncryption,
 } from "@testing/mocking-encryption";
 import {
-  addAccountMocking,
-  ProvideAccountActions,
+  MockAccountContext,
+  ProvideSpiedAccount,
 } from "@testing/mocking-account";
 
 import Page from "@/components/organisms/page";
 import AuthenticatedLayout from "@/app/(pages)/account/(authenticated)/layout";
 import AccountSettingsPage from "@/app/(pages)/account/(authenticated)/settings/page";
-import React from "react";
-
-function addAuthenticatedLayout<Props>(Page: React.FC<Props>): React.FC<Props> {
-  return function WithAuthenticatedLayout(props: Props): React.ReactNode {
-    return (
-      <AuthenticatedLayout>
-        <Page {...(props as any)} />
-      </AuthenticatedLayout>
-    );
-  };
-}
-
-const MockedAccountSettingsPage = addAccountMocking(
-  addAuthenticatedLayout(AccountSettingsPage),
-);
 
 const initialPersonalKey =
   "super secret initial key value, should not be exposed";
@@ -40,15 +25,19 @@ const initialAccountInfo = {
 
 const meta = {
   title: "Screens/AccountSettings",
-  component: MockedAccountSettingsPage,
+  component: AccountSettingsPage,
   parameters: {
     layout: "fullscreen",
     chromatic: { pauseAnimationAtEnd: true },
-  },
-  args: {
-    mockedAccount: ProvideAccountActions(initialAccountInfo),
+    accountContext: ProvideSpiedAccount(initialAccountInfo),
   },
   decorators: [
+    (Story: any) => (
+      <AuthenticatedLayout>
+        <Story />
+      </AuthenticatedLayout>
+    ),
+    MockAccountContext,
     MockEncryptionContext,
     (Story: any) => (
       <Page>
@@ -56,7 +45,7 @@ const meta = {
       </Page>
     ),
   ],
-} satisfies Meta<typeof MockedAccountSettingsPage>;
+} satisfies Meta<typeof AccountSettingsPage>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -65,7 +54,7 @@ export const KeyAvailable: Story = {
   parameters: {
     encryptionContext: ProvideSpiedEncryption(initialPersonalKey),
   },
-  play: async ({ args, canvasElement }) => {
+  play: async ({ canvasElement, parameters }) => {
     const user = userEvent.setup();
 
     const canvas = within(canvasElement);
@@ -87,10 +76,10 @@ export const KeyAvailable: Story = {
       return button;
     });
 
-    await expect(args.mockedAccount!.logout).toHaveBeenCalledTimes(0);
+    await expect(parameters.accountContext.logout).toHaveBeenCalledTimes(0);
     await user.click(logoutButton);
-    await expect(args.mockedAccount!.logout).toHaveBeenCalledTimes(1);
-    await expect(args.mockedAccount!.logout).toHaveBeenNthCalledWith(1);
+    await expect(parameters.accountContext.logout).toHaveBeenCalledTimes(1);
+    await expect(parameters.accountContext.logout).toHaveBeenNthCalledWith(1);
   },
 };
 
