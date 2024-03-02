@@ -5,7 +5,11 @@
 </p>
 
 <p align="center">
-  <a href="https://bodypace.org">bodypace.org</a> website. Encrypts and decrypts everything in your browser. Unencrypted data never leaves your device.
+  Source code of <a href="https://bodypace.org">bodypace.org</a> website.
+</p>
+
+<p align="center">
+  Webapp that encrypts and decrypts everything locally (in browser). Unencrypted data never leaves your device.
 </p>
 
 <p align="center">
