@@ -21,6 +21,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "libsodium-wrappers": "^0.7.13",
     "next": "14.0.1",
     "react": "^18",
     "react-dom": "^18"
@@ -36,6 +37,7 @@
     "@storybook/react": "^7.6.4",
     "@storybook/test": "^7.6.4",
     "@storybook/test-runner": "^0.16.0",
+    "@types/libsodium-wrappers": "^0.7.13",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
