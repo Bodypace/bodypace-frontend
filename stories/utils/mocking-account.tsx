@@ -2,10 +2,11 @@ import React from "react";
 import { fn } from "@storybook/test";
 import { action } from "@storybook/addon-actions";
 import { AccountContext, type Account, ProvideAccount } from "@/lib/account";
+import logger from "@/lib/logging";
 
 export function MockAccountContext(Story: any, ctx: any) {
   const mock = ctx.parameters.accountContext;
-  console.debug("mocking-account: MockAccountContext: ", { mock });
+  logger.debug("mocking-account: MockAccountContext: ", { mock });
   return (
     <AccountContext.Provider value={mock}>
       <Story />
@@ -15,6 +16,7 @@ export function MockAccountContext(Story: any, ctx: any) {
 
 export function SpyAccountContext(Story: any, ctx: any) {
   const account = ProvideAccount();
+  logger.debug("mocking-account: SpyAccountContext: ", { account });
   const spy: typeof account = {
     info: account.info,
     ...React.useRef({

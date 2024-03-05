@@ -8,6 +8,7 @@ import {
   type Base64,
   type Binary,
 } from "@/lib/encryption";
+import logger from "@/lib/logging";
 
 // NOTE: in tests if possible use the SpyXContext instead of using MockXContext directly.
 // This way we also test the actual behaviour of libraries which provide real production
@@ -15,7 +16,7 @@ import {
 
 export function MockEncryptionContext(Story: any, ctx: any) {
   const mock = ctx.parameters.encryptionContext;
-  console.debug("mocking-encryption: MockEncryptionContext: ", { mock });
+  logger.debug("mocking-encryption: MockEncryptionContext: ", { mock });
   return (
     <EncryptionContext.Provider value={mock}>
       <Story />
@@ -25,7 +26,7 @@ export function MockEncryptionContext(Story: any, ctx: any) {
 
 export function SpyEncryptionContext(Story: any, ctx: any) {
   const encryption = ProvideEncryption();
-  console.debug("mocking-encryption: SpyEncryptionContext: ", { encryption });
+  logger.debug("mocking-encryption: SpyEncryptionContext: ", { encryption });
 
   const spiedFunctions: (keyof Encryption)[] = [
     "toBase64",
