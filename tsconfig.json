@@ -20,7 +20,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@testing/*": ["./stories/utils/*"]
+      "@testing/*": ["./stories/utils/*"],
+      "@fixtures/*": ["./stories/fixtures/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
