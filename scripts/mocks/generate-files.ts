@@ -40,7 +40,7 @@ async function generateSampleFiles(
   );
 }
 
-const fileNames: string[] = [
+export const fileNames: string[] = [
   "blood_work.pdf",
   "xray.jpg",
   "mri.jpg",

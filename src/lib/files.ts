@@ -4,16 +4,18 @@ import React from "react";
 import { serverUrl } from "./constants";
 import logger from "./logging";
 import { AccountInfo, useAccount } from "./account";
+import { useEncryption } from "./encryption";
 
 export interface File {
   id: number;
   name: string;
+  nameDecrypted?: string;
   keys: string;
   userId: number;
 }
 
 export interface Files {
-  files: File[] | undefined | "fetch-error" | "account-missing";
+  files: File[] | undefined | "fetch-error" | "account-missing" | "decrypting";
 }
 
 export const noopFiles = {
@@ -50,12 +52,67 @@ async function fetchFiles(
 }
 
 export function ProvideFiles(): Files {
+  const decrypted = React.useRef(false);
   const [files, _setFiles] = React.useState<Files["files"]>(undefined);
   const { info: accountInfo } = useAccount();
+  const { personalKey, toBinaryFromBase64, toUnicode, decryptData } =
+    useEncryption();
+
+  const fileWithDecryptedName = async (file: File): Promise<File> => {
+    let nameDecrypted: string | undefined;
+
+    if (personalKey) {
+      try {
+        nameDecrypted = await toUnicode(
+          await decryptData(
+            await toBinaryFromBase64(file.name),
+            await decryptData(await toBinaryFromBase64(file.keys)),
+          ),
+        );
+      } catch (error) {
+        // TODO: log error? flag such file so that it can be displayed in UI
+        // that decryption failed (instead of being shown as encrypted)
+      }
+    }
+
+    return {
+      ...file,
+      nameDecrypted,
+    };
+  };
+
+  const filesWithDecryptedNames = async (files: File[]): Promise<File[]> => {
+    return await Promise.all(files.map(fileWithDecryptedName));
+  };
+
+  const setFilesActual = (
+    files: File[] | "fetch-error" | "account-missing" | "decrypting",
+  ) => {
+    logger.debug("@/lib/files: setFilesActual: ", { files });
+    _setFiles(files);
+  };
 
   const setFiles = (files: File[] | "fetch-error" | "account-missing") => {
-    logger.debug("@/lib/files: setFiles: ", { files });
-    _setFiles(files);
+    const hasElements = Array.isArray(files) && files.length > 0;
+    if (hasElements && decrypted.current !== !!personalKey) {
+      logger.debug("@/lib/files: setFiles: decrypting: ", {
+        files,
+        decrypted: decrypted.current,
+        personalKey,
+      });
+      setFilesActual("decrypting");
+      filesWithDecryptedNames(files).then((parsedFiles) => {
+        setFilesActual(parsedFiles);
+        decrypted.current = !!personalKey;
+      });
+    } else {
+      logger.debug("@/lib/files: setFiles: skipping decryption: ", {
+        files,
+        decrypted: decrypted.current,
+        personalKey,
+      });
+      setFilesActual(files);
+    }
   };
 
   logger.debug("@/lib/files: ProvideFiles", { files, accountInfo });
@@ -73,12 +130,17 @@ export function ProvideFiles(): Files {
         setFiles("account-missing");
       }
     } else {
-      logger.debug("@/lib/files: useEffect: skipped: ", {
-        files,
-        accountInfo,
-      });
+      if (decrypted.current !== !!personalKey && files !== "decrypting") {
+        setFiles(files);
+      } else {
+        logger.debug("@/lib/files: useEffect: skipped: ", {
+          files,
+          accountInfo,
+        });
+      }
     }
-  }, [files, accountInfo]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [files, accountInfo, personalKey]);
 
   return {
     files,

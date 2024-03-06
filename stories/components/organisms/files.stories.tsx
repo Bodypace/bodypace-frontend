@@ -2,11 +2,14 @@ import { Meta, StoryObj } from "@storybook/react";
 import { fn, expect, userEvent, within, waitFor } from "@storybook/test";
 import { http, HttpResponse } from "msw";
 
-import { type File } from "@/lib/files";
-
-import { MockEncryptionContext } from "@testing/mocking-encryption";
+import {
+  MockEncryptionContext,
+  SpyEncryptionContext,
+} from "@testing/mocking-encryption";
 import { SpyAccountContext } from "@testing/mocking-account";
 import { MockFilesContext, SpyFilesContext } from "@testing/mocking-files";
+import { storyFiles, getStoryFile } from "@fixtures/files";
+import mockedKey from "@fixtures/personal-key";
 
 import { Files } from "@/components/organisms/files";
 
@@ -18,22 +21,23 @@ const meta = {
     onClearSelection: fn(),
   },
   parameters: {
-    localStorage: [["accessToken", "files-story-mocked-access-token"]],
     layout: "centered",
     backgrounds: {
       default: "bodypace",
       values: [{ name: "bodypace", value: "#f7f7f7" }],
     },
-    encryptionContext: {
-      personalKey: "mocked-personal-key",
-    },
   },
-  decorators: [MockEncryptionContext],
   // tags: ["autodocs"],
 } satisfies Meta<typeof Files>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+// TODO: test long decryption state, where Files component should display "decrypting..."
+
+// TODO: test files that are not encrypted or otherwise fail to decrypt their name
+// (e.g. someone manually uploaded to bodypace-personal-data-server unencrypted data,
+//  while this frontend tries to decrypt it)
 
 const responses = {
   account: {
@@ -81,33 +85,46 @@ export const Loading: Story = {
 
 export const UnknownAccount: Story = {
   parameters: {
+    localStorage: [
+      ["personalKey", mockedKey.base64],
+      ["accessToken", "files-story-mocked-access-token"],
+    ],
     msw: {
       handlers: [responses.account.unknown, responses.documents.few],
     },
   },
-  decorators: [SpyFilesContext, SpyAccountContext],
+  decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
 };
 
 export const NetworkError: Story = {
   parameters: {
+    localStorage: [
+      ["personalKey", mockedKey.base64],
+      ["accessToken", "files-story-mocked-access-token"],
+    ],
     msw: {
       handlers: [responses.account.exists, responses.documents.networkError],
     },
   },
-  decorators: [SpyFilesContext, SpyAccountContext],
+  decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
 };
 
 export const Empty: Story = {
   parameters: {
+    localStorage: [
+      ["personalKey", mockedKey.base64],
+      ["accessToken", "files-story-mocked-access-token"],
+    ],
     msw: {
       handlers: [responses.account.exists, responses.documents.empty],
     },
   },
-  decorators: [SpyFilesContext, SpyAccountContext],
+  decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
 };
 
 export const FewItemsWithoutPersonalKey: Story = {
   parameters: {
+    localStorage: [["accessToken", "files-story-mocked-access-token"]],
     msw: {
       handlers: [responses.account.exists, responses.documents.few],
     },
@@ -115,11 +132,62 @@ export const FewItemsWithoutPersonalKey: Story = {
       personalKey: null,
     },
   },
-  decorators: [SpyFilesContext, SpyAccountContext],
+  decorators: [SpyFilesContext, SpyAccountContext, MockEncryptionContext],
+};
+
+export const FewItemsWithoutPersonalKeyDelayed: Story = {
+  parameters: {
+    localStorage: [
+      ["personalKey", mockedKey.base64],
+      ["accessToken", "files-story-mocked-access-token"],
+    ],
+    msw: {
+      handlers: [responses.account.exists, responses.documents.few],
+    },
+  },
+  decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
+  play: async ({ canvasElement, parameters }) => {
+    const canvas = within(canvasElement);
+
+    const file = getStoryFile(1);
+
+    await waitFor(
+      () => {
+        const checkbox = canvas.getByRole("checkbox", {
+          name: file.nameDecrypted,
+        });
+        expect(checkbox).toBeInTheDocument();
+        expect(checkbox).toHaveAttribute("aria-checked", "false");
+      },
+      { timeout: 2500 },
+    );
+
+    await expect(
+      parameters.encryptionContext.forgetPersonalKey,
+    ).toHaveBeenCalledTimes(0);
+
+    await parameters.encryptionContext.forgetPersonalKey();
+
+    await waitFor(() => {
+      const checkbox = canvas.queryByRole("checkbox", {
+        name: file.name,
+      });
+      expect(checkbox).not.toBeInTheDocument();
+      expect(checkbox).toBeNull();
+    });
+
+    await expect(
+      parameters.encryptionContext.forgetPersonalKey,
+    ).toHaveBeenCalledTimes(1);
+    await expect(
+      parameters.encryptionContext.forgetPersonalKey,
+    ).toHaveBeenNthCalledWith(1);
+  },
 };
 
 export const ManyItemsWithoutPersonalKey: Story = {
   parameters: {
+    localStorage: [["accessToken", "files-story-mocked-access-token"]],
     msw: {
       handlers: [responses.account.exists, responses.documents.many],
     },
@@ -127,7 +195,7 @@ export const ManyItemsWithoutPersonalKey: Story = {
       personalKey: null,
     },
   },
-  decorators: [SpyFilesContext, SpyAccountContext],
+  decorators: [SpyFilesContext, SpyAccountContext, MockEncryptionContext],
 };
 
 export const ManyItemsWithoutPersonalKeyAndSelection: Story = {
@@ -139,20 +207,88 @@ export const ManyItemsWithoutPersonalKeyAndSelection: Story = {
 
 export const FewItemsWithPersonalKey: Story = {
   parameters: {
+    localStorage: [
+      ["personalKey", mockedKey.base64],
+      ["accessToken", "files-story-mocked-access-token"],
+    ],
     msw: {
       handlers: [responses.account.exists, responses.documents.few],
     },
   },
-  decorators: [SpyFilesContext, SpyAccountContext],
+  decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
+};
+
+export const FewItemsWithPersonalKeyDelayed: Story = {
+  parameters: {
+    localStorage: [["accessToken", "files-story-mocked-access-token"]],
+    msw: {
+      handlers: [responses.account.exists, responses.documents.few],
+    },
+  },
+  decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
+  play: async ({ canvasElement, parameters }) => {
+    const canvas = within(canvasElement);
+
+    const file = getStoryFile(1);
+
+    await waitFor(
+      () => {
+        const checkboxes = canvas.getAllByRole("checkbox", {
+          name: "cant-decrypt-file-name",
+        });
+        expect(checkboxes).toHaveLength(3);
+        for (const checkbox of checkboxes) {
+          expect(checkbox).toBeInTheDocument();
+          expect(checkbox).toHaveAttribute("aria-checked", "false");
+        }
+      },
+      { timeout: 2500 },
+    );
+
+    await expect(
+      parameters.encryptionContext.importPersonalKey,
+    ).toHaveBeenCalledTimes(0);
+
+    await waitFor(
+      () => {
+        expect(parameters.encryptionContext.personalKey).toBeNull();
+      },
+      { timeout: 2000 },
+    );
+
+    await parameters.encryptionContext.importPersonalKey(mockedKey.base64);
+
+    await waitFor(
+      () => {
+        const checkbox = canvas.getByRole("checkbox", {
+          name: file.nameDecrypted,
+        });
+        expect(checkbox).toBeInTheDocument();
+        expect(checkbox).toHaveAttribute("aria-checked", "false");
+      },
+      { timeout: 2000 },
+    );
+
+    await expect(
+      parameters.encryptionContext.importPersonalKey,
+    ).toHaveBeenCalledTimes(1);
+    await expect(
+      parameters.encryptionContext.importPersonalKey,
+    ).toHaveBeenNthCalledWith(1, mockedKey.base64);
+  },
 };
 
 export const ManyItemsWithPersonalKey: Story = {
   parameters: {
+    localStorage: [
+      ["personalKey", mockedKey.base64],
+      ["accessToken", "files-story-mocked-access-token"],
+    ],
     msw: {
       handlers: [responses.account.exists, responses.documents.many],
     },
   },
-  decorators: [SpyFilesContext, SpyAccountContext],
+  decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
 };
 
 export const ManyItemsWithPersonalKeyAndSelection: Story = {
@@ -165,13 +301,16 @@ export const ManyItemsWithPersonalKeyAndSelection: Story = {
     const user = userEvent.setup();
 
     const canvas = within(canvasElement);
-    const clearSelectionButton = await waitFor(() => {
-      const button = canvas.getByRole("button", {
-        name: "clear selection",
-      });
-      expect(button).toBeInTheDocument();
-      return button;
-    });
+    const clearSelectionButton = await waitFor(
+      () => {
+        const button = canvas.getByRole("button", {
+          name: "clear selection",
+        });
+        expect(button).toBeInTheDocument();
+        return button;
+      },
+      { timeout: 2500 },
+    );
 
     await expect(args.onClearSelection).toHaveBeenCalledTimes(0);
     await user.click(clearSelectionButton);
@@ -188,7 +327,7 @@ export const ManyItemsWithPersonalKeyAndSelection: Story = {
     for (const { file, selected } of files) {
       checkbox = await waitFor(() => {
         const checkbox = canvas.getByRole("checkbox", {
-          name: file.name,
+          name: file.nameDecrypted,
         });
         expect(checkbox).toBeInTheDocument();
         expect(checkbox).toHaveAttribute(
@@ -216,147 +355,3 @@ export const ManyItemsWithPersonalKeyAndSelection: Story = {
     }
   },
 };
-
-function getStoryFile(id: number): File {
-  const file = storyFiles.find((file) => file.id === id);
-  if (!file) {
-    throw new Error(`File with id ${id} not found`);
-  }
-  return file;
-}
-
-const storyFiles: File[] = [
-  {
-    id: 1,
-    name: "blood_work.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 2,
-    name: "xray.jpg",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 3,
-    name: "mri.jpg",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 4,
-    name: "prescription.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 5,
-    name: "blood_work_2.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 6,
-    name: "cbct.jpg",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 7,
-    name: "PET.dicom",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 8,
-    name: "xray_interpretation.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 9,
-    name: "diet_plan.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 10,
-    name: "allergies_cheatsheet.jpg",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 11,
-    name: "xray_lower_spine.jpg",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 12,
-    name: "xray_pelvis.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 13,
-    name: "allergies_test_result.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 14,
-    name: "xray_knee.jpg",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 15,
-    name: "urine_test_result.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 16,
-    name: "medical_bill_1.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 17,
-    name: "medical_bill_2.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 18,
-    name: "medical_bill_3.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 19,
-    name: "medical_bill_4.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 20,
-    name: "medical_bill_5.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-  {
-    id: 21,
-    name: "medical_bill_6.pdf",
-    keys: "keys",
-    userId: 1,
-  },
-];
-
-const allFileNames = new Set(storyFiles.map((file) => file.name));
-if (allFileNames.size !== storyFiles.length) {
-  // We need to assert that because checkboxes are labelled by file names.
-  // (btw. don't worry, actual backend also does not allow duplicate file names)
-  throw new Error("File names are not unique");
-}

@@ -34,6 +34,7 @@ const config: StorybookConfig = {
       "@": path.resolve(__dirname, "../src"),
       "@testing": path.resolve(__dirname, "../stories/utils"),
       "@fixtures": path.resolve(__dirname, "../stories/fixtures"),
+      "@scripts": path.resolve(__dirname, "../scripts"),
     };
 
     return config;

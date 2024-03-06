@@ -3,6 +3,7 @@
 import React from "react";
 import sodium, { type Binary, type Base64 } from "./sodium";
 export { type Binary, type Base64 } from "./sodium";
+import logger from "./logging";
 
 const storedKeyInBrowser = {
   get: () => localStorage.getItem("personalKey"),
@@ -42,19 +43,42 @@ export const EncryptionContext =
   React.createContext<Encryption>(noopEncryption);
 
 export const ProvideEncryption = (): Encryption => {
-  const [personalKey, setPersonalKey] = React.useState<
+  const [personalKey, _setPersonalKey] = React.useState<
     Base64 | null | undefined
   >(undefined);
+
+  const setPersonalKey = (key: Base64 | null) => {
+    logger.debug("@/lib/encryption: setPersonalKey: ", { key });
+    _setPersonalKey(key);
+  };
+
+  logger.debug("@/lib/encryption: ProvideEncryption: ", { personalKey });
 
   // TODO: avoid rendering twice on first use
 
   React.useEffect(() => {
     if (personalKey === undefined) {
+      logger.debug("@/lib/encryption: useEffect: loading from storage: ", {
+        personalKey,
+      });
       setPersonalKey(storedKeyInBrowser.get() || null);
     } else {
       if (personalKey) {
-        storedKeyInBrowser.set(personalKey);
+        if (personalKey !== storedKeyInBrowser.get()) {
+          logger.debug("@/lib/encryption: useEffect: setting storage: ", {
+            personalKey,
+          });
+          storedKeyInBrowser.set(personalKey);
+        } else {
+          logger.debug(
+            "@/lib/encryption: useEffect: setting storage skipped: ",
+            { personalKey },
+          );
+        }
       } else {
+        logger.debug("@/lib/encryption: useEffect: clearing storage: ", {
+          personalKey,
+        });
         storedKeyInBrowser.clear();
       }
     }
