@@ -21,7 +21,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@testing/*": ["./stories/utils/*"],
-      "@fixtures/*": ["./stories/fixtures/*"]
+      "@fixtures/*": ["./stories/fixtures/*"],
+      "@scripts/*": ["./scripts/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

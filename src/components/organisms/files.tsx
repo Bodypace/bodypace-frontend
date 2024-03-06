@@ -1,6 +1,5 @@
 import { IconButton } from "../atoms/icon-button";
 import { File as FileComponent } from "../molecules/file";
-import { useEncryption } from "@/lib/encryption";
 import { useFiles, type File } from "@/lib/files";
 
 export interface FilesProps {
@@ -11,8 +10,15 @@ export interface FilesProps {
 
 export function Files({ selected, onSelected, onClearSelection }: FilesProps) {
   const { files } = useFiles();
-  const { personalKey } = useEncryption();
   const hasElements = Array.isArray(files) && files.length > 0;
+
+  // prettier-ignore
+  const message =
+    files === undefined         ? "Loading files..." :
+    files === "decrypting"      ? "Decrypting filenames..." :
+    files === "fetch-error"     ? "Failed to load files, refresh page to try again" :
+    files === "account-missing" ? "Login to see your files" :
+                                  "Your list of files is empty"
 
   return (
     <div className="flex flex-col items-center gap-sm">
@@ -41,9 +47,9 @@ export function Files({ selected, onSelected, onClearSelection }: FilesProps) {
           files.map((file, index) => (
             <FileComponent
               key={file.id}
-              encrypted={!personalKey}
+              encrypted={!file.nameDecrypted}
               no={index + 1}
-              filename={personalKey ? file.name : "cant-decrypt-file-name"}
+              filename={file.nameDecrypted || "cant-decrypt-file-name"}
               checked={selected ? selected.has(file.id) : false}
               onChange={() => onSelected(file.id, !selected?.has(file.id))}
             />
@@ -55,13 +61,7 @@ export function Files({ selected, onSelected, onClearSelection }: FilesProps) {
               font-technical text-lg text-color-silenced
             "
           >
-            {files === undefined
-              ? "Loading files..."
-              : files === "fetch-error"
-                ? "Failed to load files, refresh page to try again"
-                : files === "account-missing"
-                  ? "Login to see your files"
-                  : "Your list of files is empty"}
+            {message}
           </span>
         )}
       </div>

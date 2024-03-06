@@ -16,7 +16,12 @@ import logger from "@/lib/logging";
 
 export function MockEncryptionContext(Story: any, ctx: any) {
   const mock = ctx.parameters.encryptionContext;
-  logger.debug("mocking-encryption: MockEncryptionContext: ", { mock });
+  logger.debug("mocking-encryption: MockEncryptionContext: ", {
+    mock: {
+      ...mock,
+      personalKey: mock.personalKey, // clone value to not be mutated in console logs
+    },
+  });
   return (
     <EncryptionContext.Provider value={mock}>
       <Story />
@@ -28,39 +33,51 @@ export function SpyEncryptionContext(Story: any, ctx: any) {
   const encryption = ProvideEncryption();
   logger.debug("mocking-encryption: SpyEncryptionContext: ", { encryption });
 
-  const spiedFunctions: (keyof Encryption)[] = [
-    "toBase64",
-    "toBinaryFromBase64",
-    "toBinaryFromUnicode",
-    "toUnicode",
-    "generateNewKey",
-    "generateNewPersonalKey",
-    "importPersonalKey",
-    "forgetPersonalKey",
-    "encryptData",
-    "decryptData",
-  ];
+  const spy = React.useRef<Encryption>({
+    personalKey: encryption.personalKey,
+    toBase64: fn(),
+    toBinaryFromBase64: fn(),
+    toBinaryFromUnicode: fn(),
+    toUnicode: fn(),
+    generateNewKey: fn(),
+    generateNewPersonalKey: fn(),
+    importPersonalKey: fn(),
+    forgetPersonalKey: fn(),
+    encryptData: fn(),
+    decryptData: fn(),
+  });
 
-  if (!ctx.parameters.mockedEncryption) {
-    ctx.parameters.mockedEncryption = {};
-  }
+  spy.current.personalKey = encryption.personalKey;
 
-  const spy = ctx.parameters.mockedEncryption;
-  spy.personalKey = encryption.personalKey;
+  // NOTE: we are not reporting actions here, because Files component
+  // stories call below function many times and actions slow them down.
+  // I tried changing action { depth } and not passing arguments at all,
+  // but it still slowed down the tests a lot, exceeds timeouts and makes
+  // entire UI laggy.
+  (spy.current.toBase64 as any).mockImplementation(encryption.toBase64);
+  (spy.current.toBinaryFromBase64 as any).mockImplementation(
+    encryption.toBinaryFromBase64,
+  );
+  (spy.current.toBinaryFromUnicode as any).mockImplementation(
+    encryption.toBinaryFromUnicode,
+  );
+  (spy.current.toUnicode as any).mockImplementation(encryption.toUnicode);
+  (spy.current.generateNewKey as any).mockImplementation(
+    encryption.generateNewKey,
+  );
+  (spy.current.generateNewPersonalKey as any).mockImplementation(
+    encryption.generateNewPersonalKey,
+  );
+  (spy.current.importPersonalKey as any).mockImplementation(
+    encryption.importPersonalKey,
+  );
+  (spy.current.forgetPersonalKey as any).mockImplementation(
+    encryption.forgetPersonalKey,
+  );
+  (spy.current.encryptData as any).mockImplementation(encryption.encryptData);
+  (spy.current.decryptData as any).mockImplementation(encryption.decryptData);
 
-  for (const funcName of spiedFunctions) {
-    const fnFunction =
-      spy?.[funcName]?._isMockFunction === true ? spy[funcName] : fn();
-
-    fnFunction.mockImplementation(async (...args: any[]) => {
-      action(funcName)(...args);
-      return await (encryption[funcName] as any)(...args);
-    });
-
-    spy[funcName] = fnFunction;
-  }
-
-  ctx.parameters.encryptionContext = spy;
+  ctx.parameters.encryptionContext = spy.current;
   return MockEncryptionContext(Story, ctx);
 }
 
