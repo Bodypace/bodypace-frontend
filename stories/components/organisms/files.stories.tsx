@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { fn, expect, userEvent, within, waitFor } from "@storybook/test";
-import { http, HttpResponse } from "msw";
 
 import {
   MockEncryptionContext,
@@ -8,8 +7,9 @@ import {
 } from "@testing/mocking-encryption";
 import { SpyAccountContext } from "@testing/mocking-account";
 import { MockFilesContext, SpyFilesContext } from "@testing/mocking-files";
-import { storyFiles, getStoryFile } from "@fixtures/files";
+import { getStoryFile } from "@fixtures/files";
 import mockedKey from "@fixtures/personal-key";
+import responses from "@fixtures/server-responses";
 
 import { Files } from "@/components/organisms/files";
 
@@ -38,41 +38,6 @@ type Story = StoryObj<typeof meta>;
 // TODO: test files that are not encrypted or otherwise fail to decrypt their name
 // (e.g. someone manually uploaded to bodypace-personal-data-server unencrypted data,
 //  while this frontend tries to decrypt it)
-
-const responses = {
-  account: {
-    exists: http.get("http://localhost:8080/accounts", () => {
-      return HttpResponse.json({
-        sub: 12,
-      });
-    }),
-    unknown: http.get("http://localhost:8080/accounts", () => {
-      return HttpResponse.json(
-        {
-          message: "Unauthorized",
-          statusCode: 401,
-        },
-        {
-          status: 401,
-        },
-      );
-    }),
-  },
-  documents: {
-    networkError: http.get("http://localhost:8080/documents", () => {
-      return HttpResponse.error();
-    }),
-    empty: http.get("http://localhost:8080/documents", () => {
-      return HttpResponse.json([]);
-    }),
-    few: http.get("http://localhost:8080/documents", () => {
-      return HttpResponse.json([storyFiles[0], storyFiles[1], storyFiles[2]]);
-    }),
-    many: http.get("http://localhost:8080/documents", () => {
-      return HttpResponse.json(storyFiles);
-    }),
-  },
-};
 
 export const Loading: Story = {
   parameters: {
