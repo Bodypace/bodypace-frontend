@@ -31,6 +31,7 @@ export function Files({ selected, onSelected, onClearSelection }: FilesProps) {
         <span className="font-technical text-md text-color-primary">
           {/* NOTE: Backend does not provide the size of the files yet */}
           {/* {files.length > 0 ? "? GB used, ? GB available" : "10 GB available"} */}
+          &nbsp;
         </span>
       </div>
       {/* TODO: add scrollbar-gutter and/or other code to avoid width difference 
