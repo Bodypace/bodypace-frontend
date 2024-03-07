@@ -17,6 +17,8 @@ export function File({
   checked,
   onChange,
 }: FileProps) {
+  // TODO: fix double clicking on checkbox highlights filename text.
+  // (quickly clicking checkbox twice should not hightlight the filename text)
   return (
     <div
       className="
