@@ -16,10 +16,12 @@ export interface File {
 
 export interface Files {
   files: File[] | undefined | "fetch-error" | "account-missing" | "decrypting";
+  deleteFiles: (ids: File["id"][]) => Promise<void>;
 }
 
 export const noopFiles = {
   files: undefined,
+  deleteFiles: async (ids: File["id"][]) => {},
 };
 
 export const FilesContext = React.createContext<Files>(noopFiles);
@@ -142,8 +144,34 @@ export function ProvideFiles(): Files {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, accountInfo, personalKey]);
 
+  const deleteFiles = async (ids: File["id"][]) => {
+    if (!accountInfo) {
+      throw new Error("user not logged in");
+    }
+
+    try {
+      await Promise.allSettled(
+        ids.map(async (id) => {
+          await fetch(`${serverUrl}/documents/${id}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${accountInfo.accessToken}`,
+              Accept: "application/json",
+            },
+            cache: "no-cache",
+          });
+        }),
+      );
+    } catch (error) {}
+
+    const currentFiles = await fetchFiles(accountInfo);
+    decrypted.current = false;
+    setFiles(currentFiles);
+  };
+
   return {
     files,
+    deleteFiles,
   };
 }
 

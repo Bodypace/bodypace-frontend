@@ -2,10 +2,12 @@ import { Meta, StoryObj } from "@storybook/react";
 
 // TODO: test redirects
 
+import { type File } from "@/lib/files";
+
 import { SpyFilesContext, MockFilesContext } from "@testing/mocking-files";
 import mockedKey from "@fixtures/personal-key";
 import { storyFiles, getStoryFile } from "@fixtures/files";
-import responses from "@fixtures/server-responses";
+import responses, { serverLoaders } from "@fixtures/server-responses";
 
 import Page from "@/components/organisms/page";
 import AccountLayout from "@/app/(pages)/account/layout";
@@ -290,7 +292,7 @@ export const ManyFilesDecryptedAndSelectedThenCleared: Story = {
   play: async ({ canvasElement }) => {
     const user = userEvent.setup();
     const canvas = within(canvasElement);
-    const clearSelectionButton = await testManyFilesDecryptedAndSelected({
+    const [clearSelectionButton, _] = await testManyFilesDecryptedAndSelected({
       canvas,
       user,
     });
@@ -322,13 +324,130 @@ export const ManyFilesDecryptedAndSelectedThenCleared: Story = {
   },
 };
 
+export const ManyFilesDecryptedAndSelectedThenDeleted: Story = {
+  parameters: {
+    localStorage: [
+      ...meta.parameters.localStorage,
+      ["personalKey", mockedKey.base64],
+    ],
+    msw: {
+      handlers: [
+        ...meta.parameters.msw.handlers,
+        responses.newapi.documents.get,
+        responses.newapi.documents.delete,
+      ],
+    },
+  },
+  decorators: [SpyFilesContext],
+  loaders: [serverLoaders.documents.loadManyDocuments],
+  play: async ({ canvasElement, step }) => {
+    const user = userEvent.setup();
+    const canvas = within(canvasElement);
+    const [_, selectedFiles] = await testManyFilesDecryptedAndSelected({
+      canvas,
+      user,
+    });
+
+    const removeButton = canvas.getByRole("button", { name: "Remove" });
+    await expect(removeButton).toBeInTheDocument();
+    await expect(removeButton).toBeEnabled();
+
+    await expect(selectedFiles).toHaveLength(7);
+
+    await user.click(removeButton);
+
+    await waitFor(
+      () => {
+        const selectedFilesText = canvas.getByText("Selected 0 files");
+        expect(selectedFilesText).toBeInTheDocument();
+      },
+      { timeout: 2000 },
+    );
+
+    const downloadButton = canvas.queryByRole("button", { name: "Download" });
+    await expect(downloadButton).toBeInTheDocument();
+    await expect(downloadButton).toBeDisabled();
+    await expect(removeButton).toBeDisabled();
+
+    const keptFiles = storyFiles
+      .map((file) => getStoryFile(file.id))
+      .filter(
+        (file) =>
+          !selectedFiles.some((selectedFile) => file.id === selectedFile.id),
+      );
+
+    await expect(keptFiles).toHaveLength(storyFiles.length - 7);
+
+    await waitFor(() => {
+      const checkboxes = canvas.queryAllByRole("checkbox");
+      expect(checkboxes).toHaveLength(storyFiles.length - 7);
+    });
+
+    await waitFor(() => {
+      for (const keptFile of keptFiles) {
+        const checkbox = canvas.getByRole("checkbox", {
+          name: keptFile.nameDecrypted,
+        });
+        expect(checkbox).toBeInTheDocument();
+        expect(checkbox).toHaveAttribute("aria-checked", "false");
+      }
+    });
+
+    await step("ensure deleted files are not being displayed anymore", () => {
+      for (const file of selectedFiles) {
+        const checkbox = canvas.queryByRole("checkbox", {
+          name: file.nameDecrypted,
+        });
+        expect(checkbox).not.toBeInTheDocument();
+      }
+    });
+
+    const secondDeletionRound = [2, 11];
+
+    await step("select more files to delete", async () => {
+      const checkboxes = secondDeletionRound.map((fileNo) =>
+        canvas.queryByRole("checkbox", {
+          name: keptFiles[fileNo].nameDecrypted,
+        }),
+      );
+
+      await expect(checkboxes).toHaveLength(secondDeletionRound.length);
+      for (const checkbox of checkboxes) {
+        await expect(checkbox).toBeInTheDocument();
+        await user.click(checkbox);
+        await expect(checkbox).toHaveAttribute("aria-checked", "true");
+      }
+    });
+
+    await step('ensure buttons are enabled and click "Remove"', async () => {
+      await expect(downloadButton).toBeEnabled();
+      await expect(removeButton).toBeEnabled();
+
+      await user.click(removeButton);
+    });
+
+    await waitFor(
+      () => {
+        const selectedFilesText = canvas.getByText("Selected 0 files");
+        expect(selectedFilesText).toBeInTheDocument();
+      },
+      { timeout: 2000 },
+    );
+
+    await waitFor(() => {
+      const checkboxes = canvas.queryAllByRole("checkbox");
+      expect(checkboxes).toHaveLength(storyFiles.length - 9);
+    });
+  },
+};
+
 async function testManyFilesDecryptedAndSelected({
   canvas,
   user,
 }: {
   canvas: any;
   user: any;
-}) {
+}): Promise<[HTMLElement, File[]]> {
   const checkboxes = await waitFor(
     () => {
       const checkboxes = canvas.getAllByRole("checkbox");
@@ -368,5 +487,5 @@ async function testManyFilesDecryptedAndSelected({
   });
   await expect(clearSelectionButton).toBeInTheDocument();
 
-  return clearSelectionButton;
+  return [clearSelectionButton, files];
 }

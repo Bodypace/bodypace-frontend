@@ -6,7 +6,7 @@ import { useFiles, type File } from "@/lib/files";
 import { Files } from "@/components/organisms/files";
 
 export default function AccountPage() {
-  const { files } = useFiles();
+  const { files, deleteFiles } = useFiles();
   const [selection, setSelection] = React.useState<Set<File["id"]>>(new Set());
   const selectedFilesCount = selection.size;
 
@@ -28,7 +28,11 @@ export default function AccountPage() {
 
   function handleDownloadFile() {}
 
-  function handleDeleteFile() {}
+  function handleDeleteFile() {
+    deleteFiles(Array.from(selection)).then(() => {
+      setSelection(new Set());
+    });
+  }
 
   return (
     <div className="flex flex-1 justify-center">
