@@ -6,8 +6,7 @@ import { type File } from "@/lib/files";
 
 import { SpyFilesContext, MockFilesContext } from "@testing/mocking-files";
 import mockedKey from "@fixtures/personal-key";
-import { storyFiles, getStoryFile } from "@fixtures/files";
-import responses, { serverLoaders } from "@fixtures/server-responses";
+import { storyFiles, storyAccount, getStoryFile } from "@fixtures/files";
 
 import Page from "@/components/organisms/page";
 import AccountLayout from "@/app/(pages)/account/layout";
@@ -27,9 +26,6 @@ const meta = {
         "@lib/auth checks for token and if nothing is there, it will not attempt to fetch account info.",
       ],
     ],
-    msw: {
-      handlers: [responses.account.exists],
-    },
   },
   decorators: [
     (Story: any) => (
@@ -60,18 +56,8 @@ const meta = {
     await expect(uploadFileButton).toBeInTheDocument();
 
     let filesOnServer: number | null = null;
-    if (parameters.msw.handlers.length > 1) {
-      switch (parameters.msw.handlers[1]) {
-        case responses.documents.empty:
-          filesOnServer = 0;
-          break;
-        case responses.documents.few:
-          filesOnServer = 3;
-          break;
-        case responses.documents.many:
-          filesOnServer = storyFiles.length;
-          break;
-      }
+    if (parameters.serverData.documents) {
+      filesOnServer = parameters.serverData.documents.length;
     }
 
     if (filesOnServer) {
@@ -108,17 +94,18 @@ export const Loading: Story = {
     filesContext: {
       files: undefined,
     },
+    serverResponses: {
+      account: storyAccount,
+    },
   },
   decorators: [MockFilesContext],
 };
 
 export const NetworkError: Story = {
   parameters: {
-    msw: {
-      handlers: [
-        ...meta.parameters.msw.handlers,
-        responses.documents.networkError,
-      ],
+    serverResponses: {
+      account: storyAccount,
+      documents: null,
     },
   },
   decorators: [SpyFilesContext],
@@ -130,8 +117,9 @@ export const Empty: Story = {
       ...meta.parameters.localStorage,
       ["personalKey", mockedKey.base64],
     ],
-    msw: {
-      handlers: [...meta.parameters.msw.handlers, responses.documents.empty],
+    serverResponses: {
+      account: storyAccount,
+      documents: [],
     },
   },
   decorators: [SpyFilesContext],
@@ -139,8 +127,9 @@ export const Empty: Story = {
 
 export const FewFilesEncrypted: Story = {
   parameters: {
-    msw: {
-      handlers: [...meta.parameters.msw.handlers, responses.documents.few],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles.slice(0, 3),
     },
   },
   decorators: [SpyFilesContext],
@@ -148,8 +137,9 @@ export const FewFilesEncrypted: Story = {
 
 export const ManyFilesEncrypted: Story = {
   parameters: {
-    msw: {
-      handlers: [...meta.parameters.msw.handlers, responses.documents.many],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles,
     },
   },
   decorators: [SpyFilesContext],
@@ -161,8 +151,9 @@ export const FewFilesDecrypted: Story = {
       ...meta.parameters.localStorage,
       ["personalKey", mockedKey.base64],
     ],
-    msw: {
-      handlers: [...meta.parameters.msw.handlers, responses.documents.few],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles.slice(0, 3),
     },
   },
   decorators: [SpyFilesContext],
@@ -174,8 +165,9 @@ export const ManyFilesDecrypted: Story = {
       ...meta.parameters.localStorage,
       ["personalKey", mockedKey.base64],
     ],
-    msw: {
-      handlers: [...meta.parameters.msw.handlers, responses.documents.many],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles,
     },
   },
   decorators: [SpyFilesContext],
@@ -183,8 +175,9 @@ export const ManyFilesDecrypted: Story = {
 
 export const ManyFilesDecryptedDeleyedAndSelected: Story = {
   parameters: {
-    msw: {
-      handlers: [...meta.parameters.msw.handlers, responses.documents.many],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles,
     },
   },
   decorators: [SpyFilesContext, SpyEncryptionContext],
@@ -272,8 +265,9 @@ export const ManyFilesDecryptedAndSelected: Story = {
       ...meta.parameters.localStorage,
       ["personalKey", mockedKey.base64],
     ],
-    msw: {
-      handlers: [...meta.parameters.msw.handlers, responses.documents.many],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles,
     },
   },
   decorators: [SpyFilesContext],
@@ -330,16 +324,12 @@ export const ManyFilesDecryptedAndSelectedThenDeleted: Story = {
       ...meta.parameters.localStorage,
       ["personalKey", mockedKey.base64],
     ],
-    msw: {
-      handlers: [
-        ...meta.parameters.msw.handlers,
-        responses.newapi.documents.get,
-        responses.newapi.documents.delete,
-      ],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles,
     },
   },
   decorators: [SpyFilesContext],
-  loaders: [serverLoaders.documents.loadManyDocuments],
   play: async ({ canvasElement, step }) => {
     const user = userEvent.setup();
     const canvas = within(canvasElement);

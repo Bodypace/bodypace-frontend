@@ -7,9 +7,8 @@ import {
 } from "@testing/mocking-encryption";
 import { SpyAccountContext } from "@testing/mocking-account";
 import { MockFilesContext, SpyFilesContext } from "@testing/mocking-files";
-import { getStoryFile } from "@fixtures/files";
+import { getStoryFile, storyAccount, storyFiles } from "@fixtures/files";
 import mockedKey from "@fixtures/personal-key";
-import responses from "@fixtures/server-responses";
 
 import { Files } from "@/components/organisms/files";
 
@@ -54,8 +53,9 @@ export const UnknownAccount: Story = {
       ["personalKey", mockedKey.base64],
       ["accessToken", "files-story-mocked-access-token"],
     ],
-    msw: {
-      handlers: [responses.account.unknown, responses.documents.few],
+    serverResponses: {
+      account: null,
+      documents: storyFiles.slice(0, 3),
     },
   },
   decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
@@ -67,8 +67,9 @@ export const NetworkError: Story = {
       ["personalKey", mockedKey.base64],
       ["accessToken", "files-story-mocked-access-token"],
     ],
-    msw: {
-      handlers: [responses.account.exists, responses.documents.networkError],
+    serverResponses: {
+      account: storyAccount,
+      documents: null,
     },
   },
   decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
@@ -80,8 +81,9 @@ export const Empty: Story = {
       ["personalKey", mockedKey.base64],
       ["accessToken", "files-story-mocked-access-token"],
     ],
-    msw: {
-      handlers: [responses.account.exists, responses.documents.empty],
+    serverResponses: {
+      account: storyAccount,
+      documents: [],
     },
   },
   decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
@@ -90,8 +92,9 @@ export const Empty: Story = {
 export const FewItemsWithoutPersonalKey: Story = {
   parameters: {
     localStorage: [["accessToken", "files-story-mocked-access-token"]],
-    msw: {
-      handlers: [responses.account.exists, responses.documents.few],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles.slice(0, 3),
     },
     encryptionContext: {
       personalKey: null,
@@ -106,8 +109,9 @@ export const FewItemsWithoutPersonalKeyDelayed: Story = {
       ["personalKey", mockedKey.base64],
       ["accessToken", "files-story-mocked-access-token"],
     ],
-    msw: {
-      handlers: [responses.account.exists, responses.documents.few],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles.slice(0, 3),
     },
   },
   decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
@@ -153,8 +157,9 @@ export const FewItemsWithoutPersonalKeyDelayed: Story = {
 export const ManyItemsWithoutPersonalKey: Story = {
   parameters: {
     localStorage: [["accessToken", "files-story-mocked-access-token"]],
-    msw: {
-      handlers: [responses.account.exists, responses.documents.many],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles,
     },
     encryptionContext: {
       personalKey: null,
@@ -176,8 +181,9 @@ export const FewItemsWithPersonalKey: Story = {
       ["personalKey", mockedKey.base64],
       ["accessToken", "files-story-mocked-access-token"],
     ],
-    msw: {
-      handlers: [responses.account.exists, responses.documents.few],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles.slice(0, 3),
     },
   },
   decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
@@ -186,8 +192,9 @@ export const FewItemsWithPersonalKey: Story = {
 export const FewItemsWithPersonalKeyDelayed: Story = {
   parameters: {
     localStorage: [["accessToken", "files-story-mocked-access-token"]],
-    msw: {
-      handlers: [responses.account.exists, responses.documents.few],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles.slice(0, 3),
     },
   },
   decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
@@ -249,8 +256,9 @@ export const ManyItemsWithPersonalKey: Story = {
       ["personalKey", mockedKey.base64],
       ["accessToken", "files-story-mocked-access-token"],
     ],
-    msw: {
-      handlers: [responses.account.exists, responses.documents.many],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles,
     },
   },
   decorators: [SpyFilesContext, SpyAccountContext, SpyEncryptionContext],
