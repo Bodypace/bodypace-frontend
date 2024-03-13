@@ -431,6 +431,62 @@ export const ManyFilesDecryptedAndSelectedThenDeleted: Story = {
   },
 };
 
+export const OneFileDownloadedWithPersonalKey: Story = {
+  parameters: {
+    localStorage: [
+      ...meta.parameters.localStorage,
+      ["personalKey", mockedKey.base64],
+    ],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles,
+    },
+  },
+  decorators: [SpyFilesContext],
+  play: async ({ canvasElement, parameters }) => {
+    await testDownload(canvasElement, parameters, {
+      decrypted: true,
+      many: false,
+    });
+  },
+};
+
+export const ManyFilesDownloadedWithPersonalKey: Story = {
+  ...OneFileDownloadedWithPersonalKey,
+  play: async ({ canvasElement, parameters }) => {
+    await testDownload(canvasElement, parameters, {
+      decrypted: true,
+      many: true,
+    });
+  },
+};
+
+export const OneFileDownloadedWithoutPersonalKey: Story = {
+  parameters: {
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles,
+    },
+  },
+  decorators: [SpyFilesContext],
+  play: async ({ canvasElement, parameters }) => {
+    await testDownload(canvasElement, parameters, {
+      decrypted: false,
+      many: false,
+    });
+  },
+};
+
+export const ManyFilesDownloadedWithoutPersonalKey: Story = {
+  ...OneFileDownloadedWithoutPersonalKey,
+  play: async ({ canvasElement, parameters }) => {
+    await testDownload(canvasElement, parameters, {
+      decrypted: false,
+      many: true,
+    });
+  },
+};
+
 async function testManyFilesDecryptedAndSelected({
   canvas,
   user,
@@ -478,4 +534,83 @@ async function testManyFilesDecryptedAndSelected({
   await expect(clearSelectionButton).toBeInTheDocument();
 
   return [clearSelectionButton, files];
+}
+
+async function testDownload(
+  canvasElement: HTMLElement,
+  parameters: any,
+  { decrypted, many }: { decrypted: boolean; many: boolean },
+) {
+  const user = userEvent.setup();
+  const canvas = within(canvasElement);
+
+  await waitFor(
+    () => {
+      const text = canvas.getByText("Selected 0 files");
+      expect(text).toBeInTheDocument();
+    },
+    { timeout: 5000 },
+  );
+
+  const downloadButton = canvas.getByRole("button", { name: "Download" });
+  await expect(downloadButton).toBeInTheDocument();
+  await expect(downloadButton).toBeDisabled();
+
+  const removeButton = canvas.getByRole("button", { name: "Remove" });
+  await expect(removeButton).toBeInTheDocument();
+  await expect(removeButton).toBeDisabled();
+
+  // We are choosing id 2 and 6 because in fixtuers those are JPGs by extension name ("xray.jpg", "cbct.jpg").
+  // Firefox does not automatically open downloaded JPG files, but it does open pdf's, thus why we select JPG.
+  const files = [getStoryFile(2)];
+  if (many) {
+    files.push(getStoryFile(6));
+  }
+
+  if (decrypted) {
+    for (const file of files) {
+      const checkbox = canvas.getByRole("checkbox", {
+        name: file.nameDecrypted,
+      });
+      await expect(checkbox).toBeInTheDocument();
+      await user.click(checkbox);
+      await expect(checkbox).toHaveAttribute("aria-checked", "true");
+    }
+  } else {
+    const checkboxes = canvas.getAllByRole("checkbox");
+    for (const file of files) {
+      const checkbox = checkboxes[file.id - 1];
+      await expect(checkbox).toBeInTheDocument();
+      await user.click(checkbox);
+      await expect(checkbox).toHaveAttribute("aria-checked", "true");
+    }
+  }
+
+  const selectedFilesText = canvas.getByText(
+    many ? "Selected 2 files" : "Selected 1 file",
+  );
+  await expect(selectedFilesText).toBeInTheDocument();
+
+  await expect(downloadButton).toBeEnabled();
+  await expect(removeButton).toBeEnabled();
+
+  await user.click(downloadButton);
+
+  await waitFor(
+    () => {
+      expect(parameters.filesContext.downloadFiles).toHaveBeenCalledTimes(1);
+      expect(parameters.filesContext.downloadFiles).toHaveBeenCalledWith(
+        many ? [2, 6] : [2],
+      );
+    },
+    { timeout: 2000 },
+  );
+
+  await waitFor(
+    () => {
+      expect(downloadButton).toBeDisabled();
+      expect(removeButton).toBeDisabled();
+    },
+    { timeout: 2000 },
+  );
 }

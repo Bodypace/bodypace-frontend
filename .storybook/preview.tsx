@@ -77,6 +77,9 @@ const preview: Preview = {
           mockServerEndpoint.documents.get(documents),
         );
         ctx.parameters.msw.handlers.push(
+          mockServerEndpoint.documents.download(documents),
+        );
+        ctx.parameters.msw.handlers.push(
           mockServerEndpoint.documents.delete(documents),
         );
       }
