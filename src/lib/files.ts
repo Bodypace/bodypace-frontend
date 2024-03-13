@@ -17,11 +17,13 @@ export interface File {
 export interface Files {
   files: File[] | undefined | "fetch-error" | "account-missing" | "decrypting";
   deleteFiles: (ids: File["id"][]) => Promise<void>;
+  downloadFiles: (ids: File["id"][]) => Promise<void>;
 }
 
 export const noopFiles = {
   files: undefined,
   deleteFiles: async (ids: File["id"][]) => {},
+  downloadFiles: async (ids: File["id"][]) => {},
 };
 
 export const FilesContext = React.createContext<Files>(noopFiles);
@@ -169,10 +171,91 @@ export function ProvideFiles(): Files {
     setFiles(currentFiles);
   };
 
+  const downloadFiles = async (ids: File["id"][]) => {
+    if (!accountInfo) {
+      throw new Error("user not logged in");
+    }
+
+    if (!Array.isArray(files)) {
+      throw new Error("files list not available");
+    }
+
+    logger.debug("@/lib/files: downloadFiles: ", { ids });
+
+    await Promise.all(
+      ids.map(async (id) => {
+        logger.debug("@/lib/files: downloadFiles: fetching: ", {
+          id,
+        });
+
+        const file = files.find((file) => file.id === id);
+        if (!file) {
+          throw new Error("file metadata not found");
+        }
+
+        const response = await fetch(`${serverUrl}/documents/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accountInfo.accessToken}`,
+            Accept: "application/json",
+          },
+          cache: "no-cache",
+        });
+
+        logger.debug("@/lib/files: downloadFiles: fetched: ", {
+          id,
+          name: file.name,
+          keys: file.keys,
+          response,
+        });
+
+        const blob = await response.blob();
+
+        let name = file.name;
+        let data = blob;
+
+        if (personalKey) {
+          const keysDecrypted = await decryptData(
+            await toBinaryFromBase64(file.keys),
+            await toBinaryFromBase64(personalKey),
+          );
+
+          name = await toUnicode(
+            await decryptData(await toBinaryFromBase64(name), keysDecrypted),
+          );
+
+          data = new Blob([
+            await decryptData(
+              new Uint8Array(await data.arrayBuffer()),
+              keysDecrypted,
+            ),
+          ]);
+        }
+
+        downloadBlob(data, name);
+
+        if (!personalKey) {
+          downloadBlob(new Blob([file.keys]), `${name}.keys`);
+        }
+      }),
+    );
+  };
+
   return {
     files,
     deleteFiles,
+    downloadFiles,
   };
 }
 
 export const useFiles = () => React.useContext(FilesContext);
+
+function downloadBlob(blob: Blob, name: string) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}

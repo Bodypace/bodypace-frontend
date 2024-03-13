@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
-import { type File } from "@/lib/files";
+import { type FileFixture } from "@fixtures/files";
+import sodium from "@/lib/sodium";
 
 export const mockServerEndpoint = {
   accounts: {
@@ -22,18 +23,36 @@ export const mockServerEndpoint = {
       }),
   },
   documents: {
-    get: (data: File[] | null) =>
+    get: (data: FileFixture[] | null) =>
       http.get("http://localhost:8080/documents", () => {
         if (data === null) {
           return HttpResponse.error();
         }
         return HttpResponse.json(data);
       }),
-    delete: (data: File[]) =>
+    download: (data: FileFixture[]) =>
+      http.get("http://localhost:8080/documents/:id", async ({ params }) => {
+        const { id } = params;
+        const file = data.find((file: FileFixture) => file.id === Number(id));
+        if (file) {
+          const blob = new Blob([
+            await sodium.toBinaryFromBase64(file.base64content),
+          ]);
+
+          return new HttpResponse(blob, {
+            headers: {
+              "Content-Disposition": `attachment; filename="${file.name}"`,
+              "Content-Type": "application/octet-stream",
+            },
+          });
+        }
+        return HttpResponse.error();
+      }),
+    delete: (data: FileFixture[]) =>
       http.delete("http://localhost:8080/documents/:id", ({ params }) => {
         const { id } = params;
         const fileIndex = data.findIndex(
-          (file: File) => file.id === Number(id),
+          (file: FileFixture) => file.id === Number(id),
         );
         if (fileIndex !== -1) {
           data.splice(fileIndex, 1);

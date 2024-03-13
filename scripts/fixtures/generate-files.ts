@@ -30,11 +30,21 @@ async function generateSampleFiles(
         ),
       );
 
+      const base64content = await sodium.toBase64(
+        await sodium.encryptData(
+          await sodium.toBinaryFromUnicode(
+            `This is mocked content for file #${index + 1}`,
+          ),
+          await sodium.toBinaryFromBase64(fileKey),
+        ),
+      );
+
       return {
         id: index + 1,
         name,
         keys,
         userId: 1,
+        base64content,
       };
     }),
   );

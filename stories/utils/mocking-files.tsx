@@ -21,6 +21,7 @@ export function SpyFilesContext(Story: any, ctx: any) {
   const spy = React.useRef<Files>({
     files: files.files,
     deleteFiles: fn(),
+    downloadFiles: fn(),
   });
 
   spy.current.files = files.files;
@@ -28,6 +29,12 @@ export function SpyFilesContext(Story: any, ctx: any) {
     async (ids: File["id"][]) => {
       action("deleteFiles")(ids);
       return await files.deleteFiles(ids);
+    },
+  );
+  (spy.current.downloadFiles as any).mockImplementation(
+    async (ids: File["id"][]) => {
+      action("downloadFiles")(ids);
+      return await files.downloadFiles(ids);
     },
   );
 

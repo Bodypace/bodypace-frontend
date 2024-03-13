@@ -6,7 +6,7 @@ import { useFiles, type File } from "@/lib/files";
 import { Files } from "@/components/organisms/files";
 
 export default function AccountPage() {
-  const { files, deleteFiles } = useFiles();
+  const { files, deleteFiles, downloadFiles } = useFiles();
   const [selection, setSelection] = React.useState<Set<File["id"]>>(new Set());
   const selectedFilesCount = selection.size;
 
@@ -26,7 +26,11 @@ export default function AccountPage() {
 
   function handleUploadNewFile() {}
 
-  function handleDownloadFile() {}
+  function handleDownloadFile() {
+    downloadFiles(Array.from(selection)).then(() => {
+      setSelection(new Set());
+    });
+  }
 
   function handleDeleteFile() {
     deleteFiles(Array.from(selection)).then(() => {
