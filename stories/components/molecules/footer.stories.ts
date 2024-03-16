@@ -27,12 +27,12 @@ export const Default: Story = {
     const termsLink = links[0];
     await expect(termsLink).toBeInTheDocument();
     await expect(termsLink).toHaveTextContent("Terms and Conditions");
-    await expect(termsLink).toHaveAttribute("href", "terms-and-conditions");
+    await expect(termsLink).toHaveAttribute("href", "/terms-and-conditions");
 
     const privacyLink = links[1];
     await expect(privacyLink).toBeInTheDocument();
     await expect(privacyLink).toHaveTextContent("Privacy Policy");
-    await expect(privacyLink).toHaveAttribute("href", "privacy-policy");
+    await expect(privacyLink).toHaveAttribute("href", "/privacy-policy");
 
     const githubLink = links[2];
     await expect(githubLink).toBeInTheDocument();
