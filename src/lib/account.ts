@@ -2,6 +2,7 @@
 
 import React from "react";
 import { serverUrl } from "./constants";
+import { useEffectWithoutReruns } from "./effects";
 import logger from "./logging";
 
 export interface AccountInfo {
@@ -68,7 +69,7 @@ export const ProvideAccount = (): Account => {
 
   logger.debug("@/lib/account: ProvideAccount: ", { accountInfo });
 
-  React.useEffect(() => {
+  useEffectWithoutReruns(() => {
     // TODO: this is probably bad, such fetching should be done with React Query or some other alternative
     if (accountInfo === undefined) {
       logger.debug("@/lib/account: useEffect: triggered: ", { accountInfo });

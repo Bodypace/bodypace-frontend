@@ -2,6 +2,7 @@
 
 import React from "react";
 import { serverUrl } from "./constants";
+import { useEffectWithoutReruns } from "./effects";
 import logger from "./logging";
 import { AccountInfo, useAccount } from "./account";
 import { useEncryption } from "./encryption";
@@ -121,7 +122,7 @@ export function ProvideFiles(): Files {
 
   logger.debug("@/lib/files: ProvideFiles", { files, accountInfo });
 
-  React.useEffect(() => {
+  useEffectWithoutReruns(() => {
     if (files === undefined) {
       logger.debug("@/lib/files: useEffect: triggered: ", {
         files,
@@ -143,7 +144,6 @@ export function ProvideFiles(): Files {
         });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, accountInfo, personalKey]);
 
   const deleteFiles = async (ids: File["id"][]) => {

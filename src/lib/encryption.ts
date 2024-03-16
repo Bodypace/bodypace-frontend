@@ -3,6 +3,7 @@
 import React from "react";
 import sodium, { type Binary, type Base64 } from "./sodium";
 export { type Binary, type Base64 } from "./sodium";
+import { useEffectWithoutReruns } from "./effects";
 import logger from "./logging";
 
 const storedKeyInBrowser = {
@@ -56,7 +57,7 @@ export const ProvideEncryption = (): Encryption => {
 
   // TODO: avoid rendering twice on first use
 
-  React.useEffect(() => {
+  useEffectWithoutReruns(() => {
     if (personalKey === undefined) {
       logger.debug("@/lib/encryption: useEffect: loading from storage: ", {
         personalKey,
