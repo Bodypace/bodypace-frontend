@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { inter, variables } from "@/lib/fonts";
 import "./globals.css";
+import WithEncryption from "@/components/contexts/encryption";
 import Page from "@/components/organisms/page";
 
 export const metadata: Metadata = {
@@ -16,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={variables}>
       <body className={inter.className}>
-        <Page>{children}</Page>
+        <WithEncryption>
+          <Page>{children}</Page>
+        </WithEncryption>
       </body>
     </html>
   );

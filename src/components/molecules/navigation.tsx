@@ -4,10 +4,12 @@ import Logo from "../atoms/logo";
 import Icon from "../icon";
 
 export interface NavigationProps {
-  status?: "key available" | "key missing";
+  keyAvailable?: boolean;
 }
 
-export default function Navigation({ status = undefined }: NavigationProps) {
+export default function Navigation({
+  keyAvailable = undefined,
+}: NavigationProps) {
   return (
     <nav
       className="
@@ -20,15 +22,11 @@ export default function Navigation({ status = undefined }: NavigationProps) {
       <a className="p-md" href="/">
         <Logo />
       </a>
-      {status && (
+      {keyAvailable !== undefined && (
         <div className="flex flex-row items-center gap-sm">
-          <Icon
-            name={
-              status === "key available" ? "fa-key-solid" : "fa-shield-solid"
-            }
-          />
+          <Icon name={keyAvailable ? "fa-key-solid" : "fa-shield-solid"} />
           <span className="font-brand text-sm text-color-primary">
-            {status === "key available"
+            {keyAvailable
               ? "This browser has your personal key"
               : "Can't decrypt data, missing personal key"}
           </span>

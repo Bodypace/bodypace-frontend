@@ -20,6 +20,12 @@ const meta = {
   component: AccountPage,
   parameters: {
     layout: "fullscreen",
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: "/account",
+      },
+    },
     localStorage: [
       [
         "accessToken",
@@ -37,6 +43,7 @@ const meta = {
         </AccountLayout>
       </Page>
     ),
+    SpyEncryptionContext,
   ],
   play: async ({ canvasElement, parameters }) => {
     const canvas = within(canvasElement);
@@ -180,7 +187,7 @@ export const ManyFilesDecryptedDeleyedAndSelected: Story = {
       documents: storyFiles,
     },
   },
-  decorators: [SpyFilesContext, SpyEncryptionContext],
+  decorators: [SpyFilesContext],
   play: async ({ canvasElement, parameters }) => {
     const user = userEvent.setup();
 

@@ -28,6 +28,12 @@ const meta = {
   component: AccountSettingsPage,
   parameters: {
     layout: "fullscreen",
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: "/account/settings",
+      },
+    },
     chromatic: { pauseAnimationAtEnd: true },
     accountContext: ProvideSpiedAccount(initialAccountInfo),
   },
@@ -38,12 +44,12 @@ const meta = {
       </AuthenticatedLayout>
     ),
     MockAccountContext,
-    MockEncryptionContext,
     (Story: any) => (
       <Page>
         <Story />
       </Page>
     ),
+    MockEncryptionContext,
   ],
 } satisfies Meta<typeof AccountSettingsPage>;
 

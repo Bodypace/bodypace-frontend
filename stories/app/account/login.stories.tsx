@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
+import WithEncryption from "@/components/contexts/encryption";
 import Page from "@/components/organisms/page";
 import AccountLayout from "@/app/(pages)/account/layout";
 import NotAuthenticatedLayout from "@/app/(pages)/account/(not-authenticated)/layout";
@@ -10,6 +11,12 @@ const meta = {
   component: AccountLoginPage,
   parameters: {
     layout: "fullscreen",
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: "/account/login",
+      },
+    },
   },
 } satisfies Meta<typeof AccountLoginPage>;
 
@@ -19,13 +26,15 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   decorators: [
     (Story: any) => (
-      <Page>
-        <AccountLayout>
-          <NotAuthenticatedLayout>
-            <Story />
-          </NotAuthenticatedLayout>
-        </AccountLayout>
-      </Page>
+      <WithEncryption>
+        <Page>
+          <AccountLayout>
+            <NotAuthenticatedLayout>
+              <Story />
+            </NotAuthenticatedLayout>
+          </AccountLayout>
+        </Page>
+      </WithEncryption>
     ),
   ],
 };
