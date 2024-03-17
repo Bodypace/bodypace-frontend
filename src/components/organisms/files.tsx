@@ -1,10 +1,10 @@
 import { IconButton } from "../atoms/icon-button";
 import { File as FileComponent } from "../molecules/file";
-import { useFiles, type File } from "@/lib/files";
+import { useFiles, type FileMetadata } from "@/lib/files";
 
 export interface FilesProps {
-  selected?: Set<File["id"]>;
-  onSelected: (id: File["id"], selected: boolean) => any;
+  selected?: Set<FileMetadata["id"]>;
+  onSelected: (id: FileMetadata["id"], selected: boolean) => any;
   onClearSelection: () => any;
 }
 

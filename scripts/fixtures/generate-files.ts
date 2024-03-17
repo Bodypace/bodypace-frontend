@@ -1,5 +1,5 @@
 import sodium, { type Base64 } from "@/lib/sodium";
-import { type File } from "@/lib/files";
+import { type FileMetadata } from "@/lib/files";
 import mockedKey from "@fixtures/personal-key";
 
 function generateKeyString(index: number) {
@@ -9,7 +9,7 @@ function generateKeyString(index: number) {
 }
 
 async function generateSampleFiles(
-  fileNames: File["name"][],
+  fileNames: FileMetadata["name"][],
   personalKey: Base64,
 ) {
   return await Promise.all(

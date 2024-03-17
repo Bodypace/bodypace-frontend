@@ -1,5 +1,10 @@
 import React from "react";
-import { FilesContext, ProvideFiles, type File, type Files } from "@/lib/files";
+import {
+  FilesContext,
+  ProvideFiles,
+  type FileMetadata,
+  type Files,
+} from "@/lib/files";
 import logger from "@/lib/logging";
 import { fn } from "@storybook/test";
 import { action } from "@storybook/addon-actions";
@@ -26,13 +31,13 @@ export function SpyFilesContext(Story: any, ctx: any) {
 
   spy.current.files = files.files;
   (spy.current.deleteFiles as any).mockImplementation(
-    async (ids: File["id"][]) => {
+    async (ids: FileMetadata["id"][]) => {
       action("deleteFiles")(ids);
       return await files.deleteFiles(ids);
     },
   );
   (spy.current.downloadFiles as any).mockImplementation(
-    async (ids: File["id"][]) => {
+    async (ids: FileMetadata["id"][]) => {
       action("downloadFiles")(ids);
       return await files.downloadFiles(ids);
     },

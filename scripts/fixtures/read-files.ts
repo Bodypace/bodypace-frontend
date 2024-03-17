@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import { type File } from "@/lib/files";
+import { type FileMetadata } from "@/lib/files";
 import {
   toBase64,
   toBinaryFromBase64,
@@ -9,9 +9,9 @@ import {
 import { storyFiles } from "@fixtures/files";
 import mockedKey from "@fixtures/personal-key";
 
-async function decryptFiles(encryptedFiles: File[]) {
-  const decryptedFiles: File[] = await Promise.all(
-    encryptedFiles.map(async (file: File) => {
+async function decryptFiles(encryptedFiles: FileMetadata[]) {
+  const decryptedFiles: FileMetadata[] = await Promise.all(
+    encryptedFiles.map(async (file: FileMetadata) => {
       const keys = await toBase64(
         await decryptData(
           await toBinaryFromBase64(file.keys),
@@ -41,7 +41,9 @@ async function decryptFiles(encryptedFiles: File[]) {
 }
 
 async function readMockedFiles(path: string) {
-  const encryptedFiles: File[] = JSON.parse(await readFile(path, "utf8"));
+  const encryptedFiles: FileMetadata[] = JSON.parse(
+    await readFile(path, "utf8"),
+  );
 
   await decryptFiles(encryptedFiles);
 }

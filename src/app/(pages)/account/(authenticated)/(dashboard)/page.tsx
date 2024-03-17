@@ -2,17 +2,19 @@
 
 import React from "react";
 import Button from "@/components/atoms/button";
-import { useFiles, type File } from "@/lib/files";
+import { useFiles, type FileMetadata } from "@/lib/files";
 import { Files } from "@/components/organisms/files";
 import { useEncryption } from "@/lib/encryption";
 
 export default function AccountPage() {
   const { personalKey } = useEncryption();
   const { files, deleteFiles, downloadFiles } = useFiles();
-  const [selection, setSelection] = React.useState<Set<File["id"]>>(new Set());
+  const [selection, setSelection] = React.useState<Set<FileMetadata["id"]>>(
+    new Set(),
+  );
   const selectedFilesCount = selection.size;
 
-  function handleSelect(id: File["id"], selected: boolean) {
+  function handleSelect(id: FileMetadata["id"], selected: boolean) {
     if (selected) {
       selection.add(id);
       setSelection(new Set(selection));

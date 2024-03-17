@@ -7,7 +7,7 @@ import logger from "./logging";
 import { AccountInfo, useAccount } from "./account";
 import { useEncryption } from "./encryption";
 
-export interface File {
+export interface FileMetadata {
   id: number;
   name: string;
   nameDecrypted?: string;
@@ -16,22 +16,27 @@ export interface File {
 }
 
 export interface Files {
-  files: File[] | undefined | "fetch-error" | "account-missing" | "decrypting";
-  deleteFiles: (ids: File["id"][]) => Promise<void>;
-  downloadFiles: (ids: File["id"][]) => Promise<void>;
+  files:
+    | FileMetadata[]
+    | undefined
+    | "fetch-error"
+    | "account-missing"
+    | "decrypting";
+  deleteFiles: (ids: FileMetadata["id"][]) => Promise<void>;
+  downloadFiles: (ids: FileMetadata["id"][]) => Promise<void>;
 }
 
-export const noopFiles = {
+export const noopFiles: Files = {
   files: undefined,
-  deleteFiles: async (ids: File["id"][]) => {},
-  downloadFiles: async (ids: File["id"][]) => {},
+  deleteFiles: async (ids: FileMetadata["id"][]) => {},
+  downloadFiles: async (ids: FileMetadata["id"][]) => {},
 };
 
 export const FilesContext = React.createContext<Files>(noopFiles);
 
 async function fetchFiles(
   accountInfo: AccountInfo,
-): Promise<File[] | "fetch-error"> {
+): Promise<FileMetadata[] | "fetch-error"> {
   try {
     logger.debug("@/lib/files: fetchFiles: ", { accountInfo });
 
@@ -45,7 +50,7 @@ async function fetchFiles(
     });
 
     // TODO: validate that
-    const files: File[] = await response.json();
+    const files: FileMetadata[] = await response.json();
 
     logger.debug("@/lib/files: fetchFiles: ", { files });
 
@@ -63,7 +68,9 @@ export function ProvideFiles(): Files {
   const { personalKey, toBinaryFromBase64, toUnicode, decryptData } =
     useEncryption();
 
-  const fileWithDecryptedName = async (file: File): Promise<File> => {
+  const fileWithDecryptedName = async (
+    file: FileMetadata,
+  ): Promise<FileMetadata> => {
     let nameDecrypted: string | undefined;
 
     if (personalKey) {
@@ -86,18 +93,22 @@ export function ProvideFiles(): Files {
     };
   };
 
-  const filesWithDecryptedNames = async (files: File[]): Promise<File[]> => {
+  const filesWithDecryptedNames = async (
+    files: FileMetadata[],
+  ): Promise<FileMetadata[]> => {
     return await Promise.all(files.map(fileWithDecryptedName));
   };
 
   const setFilesActual = (
-    files: File[] | "fetch-error" | "account-missing" | "decrypting",
+    files: FileMetadata[] | "fetch-error" | "account-missing" | "decrypting",
   ) => {
     logger.debug("@/lib/files: setFilesActual: ", { files });
     _setFiles(files);
   };
 
-  const setFiles = (files: File[] | "fetch-error" | "account-missing") => {
+  const setFiles = (
+    files: FileMetadata[] | "fetch-error" | "account-missing",
+  ) => {
     const hasElements = Array.isArray(files) && files.length > 0;
     if (hasElements && decrypted.current !== !!personalKey) {
       logger.debug("@/lib/files: setFiles: decrypting: ", {
@@ -146,7 +157,7 @@ export function ProvideFiles(): Files {
     }
   }, [files, accountInfo, personalKey]);
 
-  const deleteFiles = async (ids: File["id"][]) => {
+  const deleteFiles = async (ids: FileMetadata["id"][]) => {
     if (!accountInfo) {
       throw new Error("user not logged in");
     }
@@ -171,7 +182,7 @@ export function ProvideFiles(): Files {
     setFiles(currentFiles);
   };
 
-  const downloadFiles = async (ids: File["id"][]) => {
+  const downloadFiles = async (ids: FileMetadata["id"][]) => {
     if (!accountInfo) {
       throw new Error("user not logged in");
     }

@@ -2,7 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 // TODO: test redirects
 
-import { type File } from "@/lib/files";
+import { type FileMetadata } from "@/lib/files";
 
 import { SpyFilesContext, MockFilesContext } from "@testing/mocking-files";
 import mockedKey from "@fixtures/personal-key";
@@ -522,7 +522,7 @@ async function testManyFilesDecryptedAndSelected({
 }: {
   canvas: any;
   user: any;
-}): Promise<[HTMLElement, File[]]> {
+}): Promise<[HTMLElement, FileMetadata[]]> {
   const checkboxes = await waitFor(
     () => {
       const checkboxes = canvas.getAllByRole("checkbox");

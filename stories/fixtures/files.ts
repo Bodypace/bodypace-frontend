@@ -1,7 +1,7 @@
-import { type File } from "@/lib/files";
+import { type FileMetadata } from "@/lib/files";
 import { fileNames } from "@scripts/fixtures/generate-files";
 
-export interface FileFixture extends File {
+export interface FileFixture extends FileMetadata {
   base64content: string;
 }
 
