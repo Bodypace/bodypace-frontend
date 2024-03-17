@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { inter, variables } from "@/lib/fonts";
 import "./globals.css";
-import WithEncryption from "@/components/contexts/encryption";
+import WithEncryption from "@/contexts/with-encryption";
 import Page from "@/components/organisms/page";
 
 export const metadata: Metadata = {

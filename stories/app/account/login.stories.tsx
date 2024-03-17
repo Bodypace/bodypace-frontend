@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import WithEncryption from "@/components/contexts/encryption";
+import WithEncryption from "@/contexts/with-encryption";
 import Page from "@/components/organisms/page";
 import AccountLayout from "@/app/(pages)/account/layout";
 import NotAuthenticatedLayout from "@/app/(pages)/account/(not-authenticated)/layout";
