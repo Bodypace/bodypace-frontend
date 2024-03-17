@@ -57,10 +57,23 @@ const meta = {
       { timeout: 2000 },
     );
 
+    const keyEntry = (parameters.localStorage as [string, string][]).find(
+      (entry) => entry[0] === "personalKey",
+    );
+    const key = keyEntry ? keyEntry[1] : null;
+    await waitFor(() => {
+      expect(parameters.encryptionContext.personalKey).toBe(key);
+    });
+
     const uploadFileButton = canvas.getByRole("button", {
       name: "Upload new file",
     });
     await expect(uploadFileButton).toBeInTheDocument();
+    if (key) {
+      await expect(uploadFileButton).toBeEnabled();
+    } else {
+      await expect(uploadFileButton).toBeDisabled();
+    }
 
     let filesOnServer: number | null = null;
     if (parameters.serverData.documents) {
@@ -205,25 +218,34 @@ export const ManyFilesDecryptedDeleyedAndSelected: Story = {
       parameters.encryptionContext.importPersonalKey,
     ).toHaveBeenCalledTimes(0);
 
+    const uploadFileButton = canvas.getByRole("button", {
+      name: "Upload new file",
+    });
+    await expect(uploadFileButton).toBeInTheDocument();
+    await expect(uploadFileButton).toBeDisabled();
+
     setTimeout(() => {
       parameters.encryptionContext.importPersonalKey(mockedKey.base64);
     }, 1000);
 
     await waitFor(
       () => {
-        const firstFileCheckbox = canvas.getByRole("checkbox", {
-          name: getStoryFile(storyFiles[0].id).nameDecrypted,
-        });
-        expect(firstFileCheckbox).toBeInTheDocument();
-
-        const lastFileCheckbox = canvas.getByRole("checkbox", {
-          name: getStoryFile(storyFiles[storyFiles.length - 1].id)
-            .nameDecrypted,
-        });
-        expect(lastFileCheckbox).toBeInTheDocument();
+        expect(uploadFileButton).toBeEnabled();
       },
       { timeout: 2000 },
     );
+
+    await waitFor(() => {
+      const firstFileCheckbox = canvas.getByRole("checkbox", {
+        name: getStoryFile(storyFiles[0].id).nameDecrypted,
+      });
+      expect(firstFileCheckbox).toBeInTheDocument();
+
+      const lastFileCheckbox = canvas.getByRole("checkbox", {
+        name: getStoryFile(storyFiles[storyFiles.length - 1].id).nameDecrypted,
+      });
+      expect(lastFileCheckbox).toBeInTheDocument();
+    });
 
     await expect(
       parameters.encryptionContext.importPersonalKey,

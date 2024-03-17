@@ -4,8 +4,10 @@ import React from "react";
 import Button from "@/components/atoms/button";
 import { useFiles, type File } from "@/lib/files";
 import { Files } from "@/components/organisms/files";
+import { useEncryption } from "@/lib/encryption";
 
 export default function AccountPage() {
+  const { personalKey } = useEncryption();
   const { files, deleteFiles, downloadFiles } = useFiles();
   const [selection, setSelection] = React.useState<Set<File["id"]>>(new Set());
   const selectedFilesCount = selection.size;
@@ -45,7 +47,11 @@ export default function AccountPage() {
           Your files
         </span>
         <div className="flex flex-col items-center gap-lg">
-          <Button text="Upload new file" wide onClick={handleUploadNewFile} />
+          <Button
+            text="Upload new file"
+            wide
+            onClick={!!personalKey ? handleUploadNewFile : undefined}
+          />
           <Button text="Settings" wide onClick="/account/settings" />
         </div>
         {files?.length ? (
