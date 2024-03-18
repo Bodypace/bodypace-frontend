@@ -516,6 +516,30 @@ export const ManyFilesDownloadedWithoutPersonalKey: Story = {
   },
 };
 
+export const OneFileUploaded: Story = {
+  parameters: {
+    localStorage: [
+      ...meta.parameters.localStorage,
+      ["personalKey", mockedKey.base64],
+    ],
+    serverResponses: {
+      account: storyAccount,
+      documents: storyFiles.slice(0, 4),
+    },
+  },
+  decorators: [SpyFilesContext],
+  play: async ({ canvasElement, parameters }) => {
+    await testUpload(canvasElement, parameters, { many: false });
+  },
+};
+
+export const ManyFilesUploaded: Story = {
+  ...OneFileUploaded,
+  play: async ({ canvasElement, parameters }) => {
+    await testUpload(canvasElement, parameters, { many: true });
+  },
+};
+
 async function testManyFilesDecryptedAndSelected({
   canvas,
   user,
@@ -564,6 +588,10 @@ async function testManyFilesDecryptedAndSelected({
 
   return [clearSelectionButton, files];
 }
+
+// TODO: simulate and test upload and download:
+// - errors
+// - slow computer/network (maybe progress bar should be added to the UI)
 
 async function testDownload(
   canvasElement: HTMLElement,
@@ -642,4 +670,67 @@ async function testDownload(
     },
     { timeout: 2000 },
   );
+}
+
+async function testUpload(
+  canvasElement: HTMLElement,
+  parameters: any,
+  { many }: { many: boolean },
+) {
+  const canvas = within(canvasElement);
+
+  await waitFor(
+    () => {
+      const checkboxes = canvas.getAllByRole("checkbox");
+      expect(checkboxes).toHaveLength(4);
+
+      expect(parameters.filesContext.uploadFiles).toHaveBeenCalledTimes(0);
+    },
+    { timeout: 2000 },
+  );
+
+  const newFiles: File[] = many
+    ? [
+        new File(
+          [new TextEncoder().encode("name file content 1")],
+          "new-file-no-1.txt",
+        ),
+        new File(
+          [new TextEncoder().encode("name file content 22")],
+          "new-file-no-22.jpg",
+        ),
+        new File(
+          [new TextEncoder().encode("name file content X")],
+          "new-file-no-X.html",
+        ),
+      ]
+    : [
+        new File(
+          [new TextEncoder().encode("name file content")],
+          "new-file.txt",
+        ),
+      ];
+
+  await parameters.filesContext.uploadFiles(newFiles);
+
+  await waitFor(
+    () => {
+      expect(parameters.filesContext.uploadFiles).toHaveBeenCalledTimes(1);
+      expect(parameters.filesContext.uploadFiles).toHaveBeenNthCalledWith(
+        1,
+        newFiles,
+      );
+
+      const checkboxes = canvas.getAllByRole("checkbox");
+      expect(checkboxes).toHaveLength(many ? 7 : 5);
+    },
+    { timeout: 2000 },
+  );
+
+  const newFileCheckbox = canvas.getByRole("checkbox", {
+    name: many ? "new-file-no-X.html" : "new-file.txt",
+  });
+
+  await expect(newFileCheckbox).toBeInTheDocument();
+  await expect(newFileCheckbox).toHaveAttribute("aria-checked", "false");
 }

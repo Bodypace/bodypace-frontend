@@ -27,6 +27,7 @@ export function SpyFilesContext(Story: any, ctx: any) {
     files: files.files,
     deleteFiles: fn(),
     downloadFiles: fn(),
+    uploadFiles: fn(),
   });
 
   spy.current.files = files.files;
@@ -40,6 +41,12 @@ export function SpyFilesContext(Story: any, ctx: any) {
     async (ids: FileMetadata["id"][]) => {
       action("downloadFiles")(ids);
       return await files.downloadFiles(ids);
+    },
+  );
+  (spy.current.uploadFiles as any).mockImplementation(
+    async (filesToUpload: File[]) => {
+      action("uploadFiles")(filesToUpload);
+      return await files.uploadFiles(filesToUpload);
     },
   );
 

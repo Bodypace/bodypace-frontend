@@ -24,12 +24,14 @@ export interface Files {
     | "decrypting";
   deleteFiles: (ids: FileMetadata["id"][]) => Promise<void>;
   downloadFiles: (ids: FileMetadata["id"][]) => Promise<void>;
+  uploadFiles: (files: File[]) => Promise<void>;
 }
 
 export const noopFiles: Files = {
   files: undefined,
   deleteFiles: async (ids: FileMetadata["id"][]) => {},
   downloadFiles: async (ids: FileMetadata["id"][]) => {},
+  uploadFiles: async (files: File[]) => {},
 };
 
 export const FilesContext = React.createContext<Files>(noopFiles);
@@ -65,8 +67,16 @@ export function ProvideFiles(): Files {
   const decrypted = React.useRef(false);
   const [files, _setFiles] = React.useState<Files["files"]>(undefined);
   const { info: accountInfo } = useAccount();
-  const { personalKey, toBinaryFromBase64, toUnicode, decryptData } =
-    useEncryption();
+  const {
+    personalKey,
+    toBase64,
+    toBinaryFromBase64,
+    toBinaryFromUnicode,
+    toUnicode,
+    generateNewKey,
+    encryptData,
+    decryptData,
+  } = useEncryption();
 
   const fileWithDecryptedName = async (
     file: FileMetadata,
@@ -252,10 +262,60 @@ export function ProvideFiles(): Files {
     );
   };
 
+  const uploadFiles = async (files: File[]) => {
+    if (!accountInfo) {
+      throw new Error("user not logged in");
+    }
+
+    if (!personalKey) {
+      throw new Error("personal key not available");
+    }
+
+    logger.debug("@/lib/files: uploadFiles: ", { files });
+
+    try {
+      await Promise.allSettled(
+        files.map(async (file) => {
+          const fileKey = await toBinaryFromBase64(await generateNewKey());
+
+          const nameEncrypted = await toBase64(
+            await encryptData(await toBinaryFromUnicode(file.name), fileKey),
+          );
+
+          const dataEncrypted = await encryptData(
+            new Uint8Array(await file.arrayBuffer()),
+            fileKey,
+          );
+
+          const keysEncrypted = await toBase64(
+            await encryptData(fileKey, await toBinaryFromBase64(personalKey)),
+          );
+
+          const formData = new FormData();
+
+          formData.append("name", nameEncrypted);
+          formData.append("file", new Blob([dataEncrypted]));
+          formData.append("keys", keysEncrypted);
+
+          await fetch(`${serverUrl}/documents`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${accountInfo.accessToken}` },
+            body: formData,
+          });
+        }),
+      );
+    } catch (error) {}
+
+    const currentFiles = await fetchFiles(accountInfo);
+    decrypted.current = false;
+    setFiles(currentFiles);
+  };
+
   return {
     files,
     deleteFiles,
     downloadFiles,
+    uploadFiles,
   };
 }
 
