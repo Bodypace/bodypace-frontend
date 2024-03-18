@@ -74,6 +74,9 @@ const preview: Preview = {
       if (documents !== undefined) {
         ctx.parameters.serverData.documents = documents;
         ctx.parameters.msw.handlers.push(
+          mockServerEndpoint.documents.upload(documents),
+        );
+        ctx.parameters.msw.handlers.push(
           mockServerEndpoint.documents.get(documents),
         );
         ctx.parameters.msw.handlers.push(
