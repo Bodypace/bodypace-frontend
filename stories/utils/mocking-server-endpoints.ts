@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { type FileFixture } from "@fixtures/files";
-import sodium from "@/lib/sodium";
+import sodium, { Base64, toBase64 } from "@/lib/sodium";
 
 export const mockServerEndpoint = {
   accounts: {
@@ -23,6 +23,28 @@ export const mockServerEndpoint = {
       }),
   },
   documents: {
+    upload: (data: FileFixture[]) =>
+      http.post("http://localhost:8080/documents", async ({ request }) => {
+        const formData = await request.formData();
+
+        const name = formData.get("name") as Base64;
+        const content = formData.get("file") as Blob;
+        const keys = formData.get("keys") as Base64;
+
+        const newFile: FileFixture = {
+          id: data.length + 1,
+          name,
+          keys,
+          userId: 1,
+          base64content: await toBase64(
+            new Uint8Array(await content.arrayBuffer()),
+          ),
+        };
+
+        data.push(newFile);
+
+        return HttpResponse.json({});
+      }),
     get: (data: FileFixture[] | null) =>
       http.get("http://localhost:8080/documents", () => {
         if (data === null) {

@@ -2,13 +2,16 @@
 
 import React from "react";
 import Button from "@/components/atoms/button";
+import { FilePicker } from "@/components/atoms/file-picker";
 import { useFiles, type FileMetadata } from "@/lib/files";
 import { Files } from "@/components/organisms/files";
 import { useEncryption } from "@/lib/encryption";
 
 export default function AccountPage() {
+  const filePickerRef = React.useRef<HTMLInputElement>(null);
+
   const { personalKey } = useEncryption();
-  const { files, deleteFiles, downloadFiles } = useFiles();
+  const { files, deleteFiles, downloadFiles, uploadFiles } = useFiles();
   const [selection, setSelection] = React.useState<Set<FileMetadata["id"]>>(
     new Set(),
   );
@@ -28,7 +31,17 @@ export default function AccountPage() {
     setSelection(new Set());
   }
 
-  function handleUploadNewFile() {}
+  function handleUploadNewFile() {
+    if (filePickerRef.current) {
+      filePickerRef.current.click();
+    }
+  }
+
+  function handleFilesPicked(fileList: FileList | null) {
+    if (fileList && fileList.length) {
+      uploadFiles(Array.from(fileList));
+    }
+  }
 
   function handleDownloadFile() {
     downloadFiles(Array.from(selection)).then(() => {
@@ -84,6 +97,7 @@ export default function AccountPage() {
           onClearSelection={handleClearSelection}
         />
       </div>
+      <FilePicker ref={filePickerRef} onFilesPicked={handleFilesPicked} />
     </div>
   );
 }
