@@ -25,6 +25,45 @@
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Note about downgrade from Next 14 to Next 13
+
+this project was created with:
+
+    "next": "14.0.1",
+    "msw-storybook-addon": "^2.0.0-beta.1",
+
+but it was downgraded to
+
+    "next": "13.2.4",
+    "msw-storybook-addon": "2.0.0-beta.2", (yea, here it is higher)
+
+NextJS was downgraded because at 2024-04-01 NextJS 14 did not work on raspberry pi linux/arm/v7 architecture (from what I tried).
+Next 14 has a dependency on SWC which does not provide prebuild binary for armv7l and I failed to run npm in such a way
+that it will build that for me, thus I downgraded (simpler than wasting 4 days to learn how cross-compilation works on npm or wait
+each time few hours for a build to finish on emulated armv7l on my host amd64/x86_64 architecture).
+
+in `tsconfig.js` such changes were made:
+
+from:
+
+    "module": "esnext",
+    "moduleResolution": "bundler",
+
+to:
+
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "forceConsistentCasingInFileNames": true  (new key-value pair)
+
+everything else is in this commmit, check git history.
+
+Those 2 lines added to vscode setting:
+
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true
+
+were added by `npm run lint` after downgrading to NextJS 13. Idk exactly why, get rid of it after upgrading back to latest NextJS version.
+
 ## Getting Started
 
 First, run the development server:

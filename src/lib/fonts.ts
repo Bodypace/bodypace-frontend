@@ -2,7 +2,9 @@ import {
   Inter,
   Patua_One,
   Poppins,
-  Sometype_Mono,
+  // Sometype_Mono, // available in Next 14
+  // We use Red_Hat_Mono font because Next 13 does not have Sometype_Mono
+  Red_Hat_Mono,
   NTR,
   Redacted_Script,
 } from "next/font/google";
@@ -23,7 +25,9 @@ const cleanFont = Poppins({
   variable: "--font-clean",
 });
 
-const technicalFont = Sometype_Mono({
+// TODO: after upgrading to Next 14, use Sometype_Mono
+// const technicalFont = Sometype_Mono({
+const technicalFont = Red_Hat_Mono({
   subsets: ["latin"],
   weight: "400",
   display: "swap",

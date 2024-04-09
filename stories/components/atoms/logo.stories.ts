@@ -21,7 +21,9 @@ export const Default: Story = {
     await iconTests.testBodypaceIcon(canvasElement, 32);
     await htmlTests.testText(canvasElement, "Bodypace", {
       "font-family":
-        'Poppins, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+        // TODO: use commented out line after upgrading to Next.js 14
+        // 'Poppins, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+        'Poppins, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"', // because of downgrade to Next 13 from Next 14
       "font-weight": "300",
       "font-size": "25.008px",
       "line-height": "31.0099px", // inside firefox on my machine it a different, idk why

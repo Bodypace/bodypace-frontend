@@ -428,7 +428,7 @@ export const ManyFilesDecryptedAndSelectedThenDeleted: Story = {
         canvas.queryByRole("checkbox", {
           name: keptFiles[fileNo].nameDecrypted,
         }),
-      );
+      ) as HTMLElement[];
 
       await expect(checkboxes).toHaveLength(secondDeletionRound.length);
       for (const checkbox of checkboxes) {
