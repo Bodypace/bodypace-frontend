@@ -64,6 +64,8 @@ const preview: Preview = {
         handlers: [],
       };
 
+      ctx.parameters.msw.handlers.push(mockServerEndpoint._info.get());
+
       if (account !== undefined) {
         ctx.parameters.serverData.account = account;
         ctx.parameters.msw.handlers.push(

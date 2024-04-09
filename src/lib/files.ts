@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { serverUrl } from "./constants";
+import { getServerUrl } from "./serverInfo";
 import { useEffectWithoutReruns } from "./effects";
 import logger from "./logging";
 import { AccountInfo, useAccount } from "./account";
@@ -42,7 +42,7 @@ async function fetchFiles(
   try {
     logger.debug("@/lib/files: fetchFiles: ", { accountInfo });
 
-    const response = await fetch(`${serverUrl}/documents`, {
+    const response = await fetch(`${await getServerUrl()}/documents`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accountInfo.accessToken}`,
@@ -175,7 +175,7 @@ export function ProvideFiles(): Files {
     try {
       await Promise.allSettled(
         ids.map(async (id) => {
-          await fetch(`${serverUrl}/documents/${id}`, {
+          await fetch(`${await getServerUrl()}/documents/${id}`, {
             method: "DELETE",
             headers: {
               Authorization: `Bearer ${accountInfo.accessToken}`,
@@ -214,14 +214,17 @@ export function ProvideFiles(): Files {
           throw new Error("file metadata not found");
         }
 
-        const response = await fetch(`${serverUrl}/documents/${id}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accountInfo.accessToken}`,
-            Accept: "application/json",
+        const response = await fetch(
+          `${await getServerUrl()}/documents/${id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accountInfo.accessToken}`,
+              Accept: "application/json",
+            },
+            cache: "no-cache",
           },
-          cache: "no-cache",
-        });
+        );
 
         logger.debug("@/lib/files: downloadFiles: fetched: ", {
           id,
@@ -297,7 +300,7 @@ export function ProvideFiles(): Files {
           formData.append("file", new Blob([dataEncrypted]));
           formData.append("keys", keysEncrypted);
 
-          await fetch(`${serverUrl}/documents`, {
+          await fetch(`${await getServerUrl()}/documents`, {
             method: "POST",
             headers: { Authorization: `Bearer ${accountInfo.accessToken}` },
             body: formData,

@@ -3,6 +3,14 @@ import { type FileFixture } from "@fixtures/files";
 import sodium, { Base64, toBase64 } from "@/lib/sodium";
 
 export const mockServerEndpoint = {
+  _info: {
+    get: () =>
+      http.get("/_info", () =>
+        HttpResponse.json({
+          serverUrl: "http://localhost:8080",
+        }),
+      ),
+  },
   accounts: {
     get: (data: { sub: number } | null) =>
       // NOTE: Response type is specified here because TypeScript complains (and idk why)

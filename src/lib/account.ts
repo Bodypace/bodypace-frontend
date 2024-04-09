@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { serverUrl } from "./constants";
+import { getServerUrl } from "./serverInfo";
 import { useEffectWithoutReruns } from "./effects";
 import logger from "./logging";
 
@@ -34,7 +34,7 @@ export async function fetchAccountInfo(): Promise<AccountInfo | null> {
   if (accessToken) {
     try {
       logger.debug("@/lib/account: fetchAccountInfo: ", { accessToken });
-      const response = await fetch(`${serverUrl}/accounts`, {
+      const response = await fetch(`${await getServerUrl()}/accounts`, {
         method: "GET",
         headers: { Authorization: `Bearer ${accessToken}` },
         cache: "no-cache",
@@ -83,7 +83,7 @@ export const ProvideAccount = (): Account => {
     username: string,
     password: string,
   ): Promise<void> => {
-    const response = await fetch(`${serverUrl}/accounts/register`, {
+    const response = await fetch(`${await getServerUrl()}/accounts/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -106,7 +106,7 @@ export const ProvideAccount = (): Account => {
 
   const login = async (username: string, password: string): Promise<void> => {
     logger.debug("@/lib/account: login: ", { username, password });
-    const response = await fetch(`${serverUrl}/accounts/login`, {
+    const response = await fetch(`${await getServerUrl()}/accounts/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
