@@ -1,0 +1,14 @@
+# source code
+.vscode/
+docker/
+scripts/
+stories/
+docs/
+
+# build output
+logs/
+node_modules/
+.next/
+next-env.d.ts
+storybook-static/
+build-storybook.log
