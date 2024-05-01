@@ -22,7 +22,7 @@ export const Default: Story = {
     await expect(footer).toBeInTheDocument();
 
     const links = canvas.getAllByRole("link");
-    await expect(links).toHaveLength(3);
+    await expect(links).toHaveLength(4);
 
     const termsLink = links[0];
     await expect(termsLink).toBeInTheDocument();
@@ -41,5 +41,10 @@ export const Default: Story = {
       "href",
       "https://github.com/Bodypace",
     );
+
+    const aboutLink = links[3];
+    await expect(aboutLink).toBeInTheDocument();
+    await expect(aboutLink).toHaveTextContent("About");
+    await expect(aboutLink).toHaveAttribute("href", "/about");
   },
 };

@@ -8,6 +8,7 @@ export default function Footer() {
       <Link text="Terms and Conditions" href="/terms-and-conditions" />
       <Link text="Privacy Policy" href="/privacy-policy" />
       <Link text="Source Code" href="https://github.com/Bodypace" />
+      <Link text="About" href="/about" />
     </footer>
   );
 }

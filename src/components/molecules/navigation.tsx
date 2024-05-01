@@ -10,20 +10,30 @@ export interface NavigationProps {
 export default function Navigation({
   keyAvailable = undefined,
 }: NavigationProps) {
+  // block
   return (
     <nav
       className="
-      flex flex-row items-center justify-between w-full pr-md
+      flex flex-row items-center justify-between
+      w-full pr-md
       border-b-[1px] border-color-accent
       sticky top-0
       bg-color-background
     "
     >
-      <a className="p-md" href="/">
-        <Logo />
-      </a>
+      <div className="flex flex-1 mr-auto flex-row items-center ">
+        <a className="p-md" href="/">
+          <Logo />
+        </a>
+        <p
+          className="font-technical py-xs px-sm rounded-rounded bg-color-warning max-w-sm border-[1px] border-color-accent select-none"
+          translate="no"
+        >
+          free beta
+        </p>
+      </div>
       {keyAvailable !== undefined && (
-        <div className="flex flex-row items-center gap-sm">
+        <div className="flex flex-1 flex-row items-center justify-center gap-sm ">
           <Icon name={keyAvailable ? "fa-key-solid" : "fa-shield-solid"} />
           <span className="font-brand text-sm text-color-primary">
             {keyAvailable
@@ -33,10 +43,12 @@ export default function Navigation({
         </div>
       )}
       <a
-        className="flex self-stretch items-center px-lg font-brand text-sm text-color-primary"
+        className="flex flex-1 flex-row-reverse ml-auto items-center"
         href="/account"
       >
-        Online Account
+        <span className="pr-lg font-brand text-sm text-color-primary">
+          Online Account
+        </span>
       </a>
     </nav>
   );

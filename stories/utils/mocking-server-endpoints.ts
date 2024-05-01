@@ -27,7 +27,7 @@ export const mockServerEndpoint = {
             },
           );
         }
-        return HttpResponse.json(data);
+        return HttpResponse.json({ ...data, username: "Jane Doe" });
       }),
   },
   documents: {

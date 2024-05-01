@@ -21,7 +21,9 @@ export default function AccountSettingsPage() {
   return (
     <div className="flex flex-1 flex-col items-center gap-xl py-2xl">
       <header className="flex flex-col items-center gap-lg pb-2xl">
-        <h1 className="font-brand text-xl text-color-primary">Jane Doe</h1>
+        <h1 className="font-brand text-xl text-color-primary">
+          {account.info?.username}
+        </h1>
         <h2 className="font-technical text-lg text-color-primary">Settings</h2>
       </header>
       {encryption.personalKey && (

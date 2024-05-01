@@ -17,7 +17,12 @@ export default function Page({ children }: { children: React.ReactNode }) {
   if (
     pathname !== "/" &&
     pathname !== "/terms-and-conditions" &&
+    pathname !== "/terms-and-conditions/website" &&
+    pathname !== "/terms-and-conditions/mobile-app" &&
     pathname !== "/privacy-policy" &&
+    pathname !== "/privacy-policy/website" &&
+    pathname !== "/privacy-policy/mobile-app" &&
+    pathname !== "/about" &&
     encryption.personalKey !== undefined
   ) {
     keyAvailable = !!encryption.personalKey;

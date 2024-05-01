@@ -4,7 +4,7 @@ import Button from "@/components/atoms/button";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-1 flex-col items-center py-2xl gap-2xl">
+    <div className="flex flex-1 flex-col items-center pt-2xl gap-2xl">
       <header className="flex flex-col items-center gap-2xl">
         <h1 className="text-center font-brand text-massive text-color-primary w-[1028px]">
           Welcome to privacy respecting health data cloud
@@ -18,6 +18,9 @@ export default function HomePage() {
       <div className="flex flex-row gap-md">
         <Button text="Login/Register" onClick="account" />
       </div>
+      <p className="flex flex-col font-technical p-md rounded-rounded bg-color-warning max-w-sm">
+        Currently in free beta, without guaranteed uptime and data retention
+      </p>
     </div>
   );
 }

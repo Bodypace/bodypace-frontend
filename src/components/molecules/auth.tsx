@@ -74,6 +74,12 @@ export default function Auth({ register = false, onSubmit }: AuthProps) {
   return (
     <div className="flex flex-col items-center">
       <div className="flex flex-col gap-lg pb-xl">
+        <p className="flex flex-col font-technical p-md rounded-rounded bg-color-warning max-w-md">
+          <em className="not-italic font-bold">this is FREE BETA version!</em>
+          For demonstration purposes only, with no uptime and data retention
+          guarantees. Your account and all your data will be deleted without
+          notice sooner or later.
+        </p>
         <TextInput
           type="text"
           placeholder="username"
@@ -118,7 +124,13 @@ export default function Auth({ register = false, onSubmit }: AuthProps) {
               }}
             />
             <label id="toc" className="font-clean text-md text-color-primary">
-              I accept Terms and Conditions
+              I accept{" "}
+              <a
+                className="underline hover:no-underline"
+                href="/terms-and-conditions/website"
+              >
+                Terms and Conditions
+              </a>
             </label>
           </Row>
         )}
@@ -136,7 +148,13 @@ export default function Auth({ register = false, onSubmit }: AuthProps) {
               id="privacy"
               className="font-clean text-md text-color-primary"
             >
-              I accept Privacy Policy
+              I accept{" "}
+              <a
+                className="underline hover:no-underline"
+                href="/privacy-policy/website"
+              >
+                Privacy Policy
+              </a>
             </label>
           </Row>
         )}

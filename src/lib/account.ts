@@ -7,6 +7,7 @@ import logger from "./logging";
 
 export interface AccountInfo {
   id: number;
+  username: string;
   accessToken: string;
 }
 
@@ -44,6 +45,7 @@ export async function fetchAccountInfo(): Promise<AccountInfo | null> {
         logger.debug("@/lib/account: fetchAccountInfo: ", { userInfo });
         return {
           id: userInfo.sub,
+          username: userInfo.username,
           accessToken: accessToken,
         };
       }
